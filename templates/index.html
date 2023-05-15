@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
+</head>
+
+<style>
+    .job-tile {
+        display: inline-block;
+        width: 90%;
+        height: 150px;
+        padding: 5%;
+        margin: 10px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        text-align: center;
+        line-height: 15px;
+        vertical-align: middle;
+        white-space: normal;
+        overflow: clip;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">IOT Project Board</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#addJobModal">Add Job</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Add Job Modal -->
+    <div class="modal fade" id="addJobModal" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addJobModalLabel">Add Job</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addJobForm" method="POST" onsubmit="updateFormAction(event);">
+
+                        <div class="mb-3">
+                            <label for="smo" class="form-label">SMO</label>
+                            <input type="text" class="form-control" id="job_number" name="job_number" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="client" class="form-label">Client Name</label>
+                            <input type="text" class="form-control" id="client" name="client">
+                        </div>
+                        <div class="mb-3">
+                            <label for="er" class="form-label">ER number</label>
+                            <input type="text" class="form-control" id="er" name="er">
+                        </div>
+                        <div class="mb-3">
+                            <label for="standard" class="form-label">Standard</label>
+                            <input type="text" class="form-control" id="standard" name="standard">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Status</label>
+                            <select class="form-control" id="status" name="status">
+                                <option value="awaiting_samples">Awaiting Samples</option>
+                                <option value="onsite">Samples Onsite</option>
+                                <option value="on_test">On Test</option>
+                                <option value="report_stage">Report Stage</option>
+                                <option value="report_sent">Report Sent</option>
+                                <option value="disposal">Awaiting Disposal</option>
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary" form="addJobForm">Save changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid mt-3">
+        <div class="row" id="kanban-board">
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Awaiting Samples</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="awaiting_samples"></div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Samples onsite</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="onsite"></div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">On Test</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="on_test"></div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Report Stage</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="report_stage"></div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Report Sent</h3>
+                    </div>
+                    <div id="report_sent" class="card-body kanban-items"></div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Awaiting Disposal</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="disposal"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='kanban.js') }}"></script>
+    <script src="{{ url_for('static', filename='newJob.js') }}"></script>
+</body>
+
+</html>

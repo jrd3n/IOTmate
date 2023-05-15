@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Test Form</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">Job Details</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('test_toc', smo=smo) }}">Back to TOC</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('test_form', smo=smo, test='A.1.2') }}">Next Test</a>
+                    </li>
+                </ul>
+            </div>
+            <span class="navbar-text">
+                Job Number: {{ job_info.job_number }} | Client: {{ job_info.client }} | Standard: {{ job_info.Standard
+                }}
+            </span>
+        </div>
+    </nav>
+    <div class="container">
+        <h1 class="mb-4">{{ test }} - {{ test_data.title }}</h1>
+        <form action="{{ url_for('test_form', smo=smo, test=test) }}" method="post" enctype="multipart/form-data">
+
+            <fieldset class="mb-3">
+                <legend>Requirments</legend>
+                <div class="mb-3">
+                    <label><test_data class="method">{{ test_data.requirments }}</label>
+                </div>
+            </fieldset>
+
+            <div class="mb-3">
+                <label for="operator" class="form-label">Operator</label>
+                <input type="text" class="form-control" id="operator" name="operator" value="{{ test_data.operator }}">
+            </div>
+            <fieldset class="mb-3">
+                <legend>Method</legend>
+                <div class="mb-3">
+                    <label><test_data class="method">{{ test_data.method }}</label>
+                </div>
+                <div class="mb-3">
+                    <label for="method-comment" class="form-label">Method Comment</label>
+                    <textarea class="form-control" id="method-comment" name="method-comment" rows="3">{{ test_data['method-comment'] }}</textarea>
+                </div>
+            </fieldset>
+            <fieldset class="mb-3">
+                <legend>Criteria</legend>
+                <div class="mb-3">
+                    <label><test_data class="method">{{ test_data.criteria }}</label>
+                </div>
+                <div class="mb-3">
+                    <label for="criteria-comment" class="form-label">Criteria Comment</label>
+                    <textarea class="form-control" id="criteria-comment" name="criteria-comment" rows="3">{{ test_data['criteria-comment'] }}</textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="status" class="form-label">Status</label>
+                    <select class="form-select" name="status">
+                        <option value="not started" {% if test_data.status=='not started' %}selected{% endif %}>Not Started
+                        </option>
+                        <option value="High" {% if test_data.status=='High' %}selected{% endif %}>High</option>
+                        <option value="medium" {% if test_data.status=='medium' %}selected{% endif %}>Medium</option>
+                        <option value="low" {% if test_data.status=='low' %}selected{% endif %}>Low</option>
+                        <option value="passed" {% if test_data.status=='passed' %}selected{% endif %}>Passed</option>
+                        <option value="N/A" {% if test_data.status=='N/A' %}selected{% endif %}>N/A</option>
+                    </select>
+                </div>    
+            </fieldset>
+            <div class="mb-3">
+                <label for="conclusion" class="form-label">Conclusion</label>
+                <select class="form-select" name="status" onchange="">
+                    <option value="" {% if test_data.status=='' %}selected{% endif %}></option>
+                    <option value="Passed" {% if test_data.status=='Passed' %}selected{% endif %}>Passed</option>
+                    <option value="Failed" {% if test_data.status=='Failed' %}selected{% endif %}>Failed</option>
+                    <option value="Not Applicable" {% if test_data.status=='Not Applicable' %}selected{% endif %}>N/A
+                    </option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="photo" class="form-label">Upload Photo</label>
+                <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+            </div>
+            
+
+            <div class="mb-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" class="form-control" id="date" name="date" value="{{ test_data.date }}" required>
+            </div>
+
+
+            <!-- Add more form elements for other test data fields -->
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+
+        
+
+
+
+    </script>
+</body>
+
+</html>
