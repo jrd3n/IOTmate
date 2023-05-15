@@ -22,7 +22,7 @@
                             <a class="nav-link" href="{{ url_for('index')}}">IoT Project Board</a>
                         </li>
                     </ul>
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addJobModal">
+                    <button type="button" class="btn btn-primary open-modal-button">
                         Edit Job Data
                     </button>
                 </div>
@@ -70,72 +70,16 @@
             </tbody>
         </table>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <div class="modal fade" id="addJobModal" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addJobModalLabel">Edit Job</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addJobForm" method="POST" onsubmit="updateFormAction(event);">
-
-                        <div class="mb-3">
-                            <label for="smo" class="form-label">SMO</label>
-                            <input type="text" class="form-control" id="job_number" name="job_number"
-                                value="{{ job_info.job_number }}" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="client" class="form-label">Client Name</label>
-                            <input type="text" class="form-control" id="client" name="client"
-                                value="{{ job_info.client }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="er" class="form-label">ER Number</label>
-                            <input type="text" class="form-control" id="er" name="er" value="{{ job_info.er }}">
-                        </div>
-                        <div class="mb-3">
-                            <label for="standard" class="form-label">Test Standard</label>
-                            <input type="text" class="form-control" id="standard" name="standard"
-                                value="{{ job_info.standard }}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-control" id="status" name="status">
-
-                                <option value="awaiting_samples" {% if job_info.status=='awaiting_samples' %}selected{%
-                                    endif %}>Awaiting Samples</option>
-                                </option>
-                                <option value="onsite" {% if job_info.status=='onsite' %}selected{% endif %}>Samples
-                                    Onsite</option>
-                                <option value="on_test" {% if job_info.status=='on_test' %}selected{% endif %}>On Test
-                                </option>
-                                <option value="report_stage" {% if job_info.status=='report_stage' %}selected{% endif
-                                    %}>Report Stage</option>
-                                <option value="report_sent" {% if job_info.status=='report_sent' %}selected{% endif %}>
-                                    Report Sent</option>
-                                <option value="disposal" {% if job_info.status=='disposal' %}selected{% endif %}>
-                                    Awaiting Disposal</option>
-
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="test_data_file" class="form-label">Upload test_data.json</label>
-                            <input type="file" class="form-control" id="test_data_file" accept=".json">
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" form="addJobForm">Save changes</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Add this script tag at the end of the <body> section -->
-    <script src="{{ url_for('static', filename='newJob.js') }}"></script>
+    <!-- Custom JavaScript for add_edit job-->
+    <script src="{{ url_for('static', filename='add_edit_job_modal.js') }}"></script>
+    <script>
+        // this is going to be passed to the add edit job modal
+        var smo = "{{ job_info.job_number }}";
+    </script>
 </body>
 </html>

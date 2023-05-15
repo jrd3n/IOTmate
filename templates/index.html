@@ -32,7 +32,6 @@
 </style>
 
 <body>
-
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
@@ -44,61 +43,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#addJobModal">Add Job</a>
+                        <a class="btn btn-primary open-modal-button">Add Job</a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Add Job Modal -->
-    <div class="modal fade" id="addJobModal" tabindex="-1" aria-labelledby="addJobModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addJobModalLabel">Add Job</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addJobForm" method="POST" onsubmit="updateFormAction(event);">
-
-                        <div class="mb-3">
-                            <label for="smo" class="form-label">SMO</label>
-                            <input type="text" class="form-control" id="job_number" name="job_number" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="client" class="form-label">Client Name</label>
-                            <input type="text" class="form-control" id="client" name="client">
-                        </div>
-                        <div class="mb-3">
-                            <label for="er" class="form-label">ER number</label>
-                            <input type="text" class="form-control" id="er" name="er">
-                        </div>
-                        <div class="mb-3">
-                            <label for="standard" class="form-label">Standard</label>
-                            <input type="text" class="form-control" id="standard" name="standard">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <select class="form-control" id="status" name="status">
-                                <option value="awaiting_samples">Awaiting Samples</option>
-                                <option value="onsite">Samples Onsite</option>
-                                <option value="on_test">On Test</option>
-                                <option value="report_stage">Report Stage</option>
-                                <option value="report_sent">Report Sent</option>
-                                <option value="disposal">Awaiting Disposal</option>
-                            </select>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary" form="addJobForm">Save changes</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="container-fluid mt-3">
         <div class="row" id="kanban-board">
 
@@ -158,8 +109,21 @@
 
         </div>
     </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript -->
+
     <script src="{{ url_for('static', filename='kanban.js') }}"></script>
-    <script src="{{ url_for('static', filename='newJob.js') }}"></script>
+
+    <!-- Custom JavaScript for add_edit job-->
+    <script src="{{ url_for('static', filename='add_edit_job_modal.js') }}"></script>
+    <script>
+        // this is going to be passed to the add edit job modal
+        var smo = "";
+    </script>
 </body>
 
 </html>
