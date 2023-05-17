@@ -30,7 +30,6 @@ def get_all_jobs():
 
     return jsonify(all_jobs)
 
-
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 
@@ -144,9 +143,9 @@ def data(smo):
 
         new_data = request.json
 
-        # print("Here")
+        print("Here")
 
-        # print(new_data)
+        print(new_data)
 
         smo_path = f"data/{smo}"
     
@@ -161,9 +160,9 @@ def data(smo):
                 "end_date": "",
                 "description": ""
             }
-        
-        with open(f"{smo_path}/job.json", 'w') as file:
-            json.dump(job_data, file)
+
+            with open(f"{smo_path}/job.json", 'w') as file:
+                json.dump(job_data, file)
 
         with open(job_file_path, 'w') as file:
             json.dump(new_data, file)
