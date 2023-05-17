@@ -64,8 +64,6 @@ function updateData() {
             item.status = key;
             const smo = item.job_number
 
-            print(item)
-
             fetch(`/${smo}/data`, {
                 method: 'POST',
                 headers: {
