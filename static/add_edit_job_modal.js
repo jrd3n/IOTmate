@@ -3,7 +3,7 @@ $(document).ready(function () {
 
     // Create the modal HTML structure
     var modalHtml = `
-        <div id="myModal" class="modal fade" tabindex="-1">
+        <div id="myModal" class="modal fade" tabindex="-1" style="z-index: 3000;">
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -38,6 +38,7 @@ $(document).ready(function () {
                                     <option value="report_stage">Report Stage</option>
                                     <option value="report_sent">Report Sent</option>
                                     <option value="disposal">Awaiting Disposal</option>
+                                    <option value="archive">Archive</option>
                                 </select>
                             </div>
                             <div class="mb-3">

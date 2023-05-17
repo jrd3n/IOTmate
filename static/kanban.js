@@ -6,7 +6,8 @@ const columns = {
     "on_test": [],
     "report_stage": [],
     "report_sent": [],
-    "disposal": []
+    "disposal": [],
+    "archive": []
 }
 
 function loadData() {

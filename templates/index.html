@@ -32,16 +32,18 @@
 </style>
 
 <body>
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" style="z-index: 5000;">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel"
+        style="z-index: 5000;">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
         <div class="offcanvas-body">
             <div>
-                <a class="btn btn-primary open-modal-button">Add Job</a>
+                <a class="btn btn-primary open-modal-button" data-bs-dismiss="offcanvas">Add Job</a>
             </div>
             <div id="qrcode"></div>
+            <input type="checkbox" id="archiveCheckbox"> Show Archive
         </div>
     </div>
     <!-- Navbar -->
@@ -111,6 +113,15 @@
                 </div>
             </div>
 
+            <div class="col-md-2" style="display: none;" id="archiveColumn">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Archive</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="archive"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -134,6 +145,32 @@
     <script src="{{ url_for('static', filename='qrcode_generator.js') }}"></script>
     <script>
         var This_page_url = "{{ request.url }}";
+    </script>
+
+    <script>
+
+        // Function for the show and hide archive coloum
+        const archiveColumn = document.getElementById('archiveColumn');
+        const kanbanColumns = document.querySelector('.col-md-2');
+
+        // Function to toggle the visibility of the archive column
+        function toggleArchiveColumn() {
+            if (archiveCheckbox.checked) {
+                archiveColumn.style.display = 'block'; // Show the column
+                //alert("HERE")
+            } else {
+                archiveColumn.style.display = 'none'; // Hide the column
+
+            }
+        }
+
+        // Event listener for checkbox change
+        const archiveCheckbox = document.getElementById('archiveCheckbox');
+        archiveCheckbox.addEventListener('change', toggleArchiveColumn);
+
+        // Initial toggle based on checkbox state
+        //toggleArchiveColumn();
+
     </script>
 </body>
 
