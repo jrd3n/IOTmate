@@ -8,7 +8,34 @@
 </head>
 
 <body>
-    <div class="container">
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" style="z-index: 5000;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div>
+                <a class="btn btn-primary open-modal-button">Add Job</a>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index')}}">Tests TOC</a>
+            <span class="navbar-text">
+                Job Number: {{ job_info.job_number }} | Client: {{ job_info.client }} | Standard: {{
+                job_info.Standard }}
+            </span>
+            <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- <div class="container">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container">
                 <a class="navbar-brand" href="#">Test TOC</a>
@@ -32,7 +59,9 @@
                     job_info.Standard }}
                 </span>
             </div>
-        </nav>
+        </nav> -->
+
+        <div class="container">
         <h1 class="mb-4">Tests</h1>
 
         <!-- i would like some kind of head to remind the operator which job we are working with -->
