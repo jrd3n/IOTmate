@@ -1,1 +1,45 @@
-{"A.1.1": {"title": "Test 2", "requirments": "BSI method", "operator": "jordon", "date": "2023-05-06", "status": "High", "method": "Run the nessus stuff", "criteria": "not fails", "conclusion": "", "photo_path": "data/123456/A.1.1/Image_created_with_a_mobile_phone.png", "method-comment": "", "criteria-comment": ""}, "A.1.2": {"title": "Test 3", "requirments": "BSI method", "operator": "Jordon", "status": "passed", "method": "nmap script", "date": "2023-05-17", "method-comment": "", "criteria-comment": ""}, "B.1": {"title": "Test 3", "requirments": "BSI method", "operator": "Jordon", "status": "not started", "method": "nmap script", "date": "2023-05-17", "method-comment": "", "criteria-comment": ""}, "B.2": {"title": "Test 3", "requirments": "BSI method", "operator": "Jordon", "status": "not started", "method": "nmap script", "date": "2023-05-17", "method-comment": "", "criteria-comment": ""}}
+{
+    "A.1.1": {
+        "title": "Test 2",
+        "requirments": "BSI method",
+        "operator": "jordon",
+        "date": "2023-05-06",
+        "status": "High",
+        "method": "Run the nessus stuff",
+        "criteria": "not fails",
+        "conclusion": "",
+        "photo_path": "data/123456/A.1.1/Image_created_with_a_mobile_phone.png",
+        "method-comment": "",
+        "criteria-comment": ""
+    },
+    "A.1.2": {
+        "title": "Test 3",
+        "requirments": "BSI method",
+        "operator": "Jordon",
+        "status": "passed",
+        "method": "nmap script",
+        "date": "2023-05-17",
+        "method-comment": "",
+        "criteria-comment": ""
+    },
+    "B.1": {
+        "title": "Test 3",
+        "requirments": "BSI method",
+        "operator": "Jordon",
+        "status": "not started",
+        "method": "nmap script",
+        "date": "2023-05-17",
+        "method-comment": "",
+        "criteria-comment": ""
+    },
+    "B.2": {
+        "title": "Test 3",
+        "requirments": "BSI method",
+        "operator": "Jordon",
+        "status": "not started",
+        "method": "nmap script",
+        "date": "2023-05-17",
+        "method-comment": "",
+        "criteria-comment": ""
+    }
+}

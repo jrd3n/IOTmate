@@ -3,7 +3,6 @@ from werkzeug.utils import secure_filename
 import json
 import os
 
-
 app = Flask(__name__, static_url_path='/static')
 
 def write_test_json_file(smo, data):
@@ -125,6 +124,7 @@ def read_job_json_file(smo):
 @app.route('/<smo>')
 def test_toc(smo):
     tests = read_test_json_file(smo)
+    print(tests)
     job_info = read_job_json_file(smo)
     return render_template('test_toc.html', tests=tests, smo=smo, job_info=job_info)
 
