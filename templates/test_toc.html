@@ -4,7 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <title>SMO Table of Contents</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
 </head>
 
 <body>
@@ -18,6 +21,7 @@
             <div>
                 <a class="btn btn-primary open-modal-button">Add Job</a>
             </div>
+            <div id="qrcode"></div>
         </div>
     </div>
     <!-- Navbar -->
@@ -103,12 +107,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript -->
 
     <!-- Custom JavaScript for add_edit job-->
     <script src="{{ url_for('static', filename='add_edit_job_modal.js') }}"></script>
     <script>
         // this is going to be passed to the add edit job modal
         var smo = "{{ job_info.job_number }}";
+    </script>
+
+    <!-- Code for the QR -->
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script src="{{ url_for('static', filename='qrcode_generator.js') }}"></script>
+    <script>
+        var This_page_url = "{{ request.url }}";
     </script>
 </body>
 </html>
