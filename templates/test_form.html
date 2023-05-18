@@ -74,8 +74,8 @@
 
                 <div class="card mt-2" >
                     <div class="card-body">
-                        <div class="card-header">Uploaded Files</div>
-                        <ul class="list-group list-group-flush>">
+                        <div class="card-header"><h5>Files</h5></div>
+                        <ul class="list-group list-group-flush>" style=" margin-top: 10px; margin-left: 5px; ">
                             {% for file in files %}
                             <li><a href="/{{smo}}/{{test}}/download/{{file}}" download>{{ file }}</a></li>
                             {% endfor %}
