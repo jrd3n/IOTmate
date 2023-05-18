@@ -24,52 +24,24 @@
             <div id="qrcode"></div>
         </div>
     </div>
-    <!-- Navbar -->
+
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index')}}">Tests TOC</a>
             <span class="navbar-text">
-                Job Number: {{ job_info.job_number }} | Client: {{ job_info.client }} | Standard: {{
-                job_info.Standard }}
+                Job Number: {{ job_info.job_number }} | Client: {{ job_info.client }} | Standard: {{ job_info.Standard }}
             </span>
-            <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+            <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                 <span class="navbar-toggler-icon"></span>
             </button>
         </div>
     </nav>
 
-    <!-- <div class="container">
-        <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <div class="container">
-                <a class="navbar-brand" href="#">Test TOC</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ url_for('index')}}">IoT Project Board</a>
-                        </li>
-                    </ul>
-                    <button type="button" class="btn btn-primary open-modal-button">
-                        Edit Job Data
-                    </button>
-                </div>
-
-                <span class="navbar-text">
-                    Job Number: {{ job_info.job_number }} | Client: {{ job_info.client }} | Standard: {{
-                    job_info.Standard }}
-                </span>
-            </div>
-        </nav> -->
-
-        <div class="container">
+    <div class="container">
         <h1 class="mb-4">Tests</h1>
 
-        <!-- i would like some kind of head to remind the operator which job we are working with -->
-
+        <!-- Not Complete Table -->
+        <h2>Not Complete</h2>
         <table class="table table-striped">
             <thead>
                 <tr>
@@ -79,7 +51,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for test_number, test in tests.items() %}
+                {% for test_number, test in tests.items() if test.conclusion == '' %}
                 {% set row_class = '' %}
                 {% if test.status == 'not started' %}
                 {% set row_class = 'table-warning' %}
@@ -89,8 +61,39 @@
                 {% set row_class = 'table-info' %}
                 {% elif test.status == 'low' %}
                 {% set row_class = 'table-primary' %}
-                {% elif test.status == 'passed' %}
-                {% set row_class = 'table-success' %}
+                {% elif test.status == 'N/A' %}
+                {% set row_class = 'table-secondary' %}
+                {% endif %}
+                <tr class="{{ row_class }}">
+                    <td><a href="{{ url_for('test_form', smo=smo, test=test_number) }}">{{ test_number }}</a></td>
+                    <td>{{ test.title }}</td>
+                    <td>{{ test.status }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Complete Table -->
+        <h2>Complete</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Title</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test_number, test in tests.items() if test.conclusion != '' %}
+                {% set row_class = '' %}
+                {% if test.status == 'not started' %}
+                {% set row_class = 'table-warning' %}
+                {% elif test.status == 'High' %}
+                {% set row_class = 'table-danger' %}
+                {% elif test.status == 'medium' %}
+                {% set row_class = 'table-info' %}
+                {% elif test.status == 'low' %}
+                {% set row_class = 'table-primary' %}
                 {% elif test.status == 'N/A' %}
                 {% set row_class = 'table-secondary' %}
                 {% endif %}
@@ -103,24 +106,21 @@
             </tbody>
         </table>
     </div>
-    <!-- Bootstrap JavaScript -->
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <!-- Custom JavaScript -->
 
-    <!-- Custom JavaScript for add_edit job-->
     <script src="{{ url_for('static', filename='add_edit_job_modal.js') }}"></script>
     <script>
-        // this is going to be passed to the add edit job modal
         var smo = "{{ job_info.job_number }}";
     </script>
 
-    <!-- Code for the QR -->
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script src="{{ url_for('static', filename='qrcode_generator.js') }}"></script>
     <script>
         var This_page_url = "{{ request.url }}";
     </script>
 </body>
+
 </html>

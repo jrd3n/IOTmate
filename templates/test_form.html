@@ -123,11 +123,11 @@
             </fieldset>
             <div class="mb-3">
                 <label for="conclusion" class="form-label">Conclusion</label>
-                <select class="form-select" name="status" onchange="">
-                    <option value="" {% if test_data.status=='' %}selected{% endif %}></option>
-                    <option value="Passed" {% if test_data.status=='Passed' %}selected{% endif %}>Passed</option>
-                    <option value="Failed" {% if test_data.status=='Failed' %}selected{% endif %}>Failed</option>
-                    <option value="Not Applicable" {% if test_data.status=='Not Applicable' %}selected{% endif %}>N/A
+                <select class="form-select" name="conclusion" onchange="">
+                    <option value="" {% if test_data.conclusion=='' %}selected{% endif %}></option>
+                    <option value="Passed" {% if test_data.conclusion=='Passed' %}selected{% endif %}>Passed</option>
+                    <option value="Failed" {% if test_data.conclusion=='Failed' %}selected{% endif %}>Failed</option>
+                    <option value="Not Applicable" {% if test_data.conclusion=='Not Applicable' %}selected{% endif %}>N/A
                     </option>
                 </select>
             </div>
