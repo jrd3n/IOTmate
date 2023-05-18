@@ -1,5 +1,5 @@
-python -m venv ./venv
+python3 -m venv ./venv
 mkdir ./data
 source ./venv/bin/activate
-pip install requirments.txt
+pip install -r ./requirments.txt
 python3 app.py
