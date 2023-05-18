@@ -11,7 +11,8 @@
 </head>
 
 <body>
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" style="z-index: 2000;">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel"
+        style="z-index: 2000;">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -23,7 +24,7 @@
             <div>
                 <div id="qrcode"></div>
             </div>
-            
+
         </div>
     </div>
     <!-- Navbar -->
@@ -41,9 +42,10 @@
         </div>
     </nav>
 
+    <div class="container-fluid">
+        <div class="row">
 
-
-    <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <!-- <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="#">Job Details</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -67,90 +69,125 @@
         </div>
     </nav> -->
 
+            <!-- Left Panel -->
+            <div class="col-md-2">
 
-
-
-
-
-
-
-    <div class="container">
-        <h1 class="mb-4">{{ test }} - {{ test_data.title }}</h1>
-        <form action="{{ url_for('test_form', smo=smo, test=test) }}" method="post" enctype="multipart/form-data">
-
-            <fieldset class="mb-3">
-                <legend>Requirments</legend>
-                <div class="mb-3">
-                    <label><test_data class="method">{{ test_data.requirments }}</label>
+                <div class="card mt-2" >
+                    <div class="card-body">
+                        <div class="card-header">Uploaded Files</div>
+                        <ul class="list-group list-group-flush>">
+                            {% for file in files %}
+                            <li><a href="/{{smo}}/{{test}}/download/{{file}}" download>{{ file }}</a></li>
+                            {% endfor %}
+                            
+                        </ul>
+                    </div>
                 </div>
-            </fieldset>
-
-            <div class="mb-3">
-                <label for="operator" class="form-label">Operator</label>
-                <input type="text" class="form-control" id="operator" name="operator" value="{{ test_data.operator }}">
-            </div>
-            <fieldset class="mb-3">
-                <legend>Method</legend>
-                <div class="mb-3">
-                    <label><test_data class="method">{{ test_data.method }}</label>
-                </div>
-                <div class="mb-3">
-                    <label for="method-comment" class="form-label">Method Comment</label>
-                    <textarea class="form-control" id="method-comment" name="method-comment" rows="3">{{ test_data['method-comment'] }}</textarea>
-                </div>
-            </fieldset>
-            <fieldset class="mb-3">
-                <legend>Criteria</legend>
-                <div class="mb-3">
-                    <label><test_data class="method">{{ test_data.criteria }}</label>
-                </div>
-                <div class="mb-3">
-                    <label for="criteria-comment" class="form-label">Criteria Comment</label>
-                    <textarea class="form-control" id="criteria-comment" name="criteria-comment" rows="3">{{ test_data['criteria-comment'] }}</textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="status" class="form-label">Status</label>
-                    <select class="form-select" name="status">
-                        <option value="not started" {% if test_data.status=='not started' %}selected{% endif %}>Not Started
-                        </option>
-                        <option value="High" {% if test_data.status=='High' %}selected{% endif %}>High</option>
-                        <option value="medium" {% if test_data.status=='medium' %}selected{% endif %}>Medium</option>
-                        <option value="low" {% if test_data.status=='low' %}selected{% endif %}>Low</option>
-                        <option value="passed" {% if test_data.status=='passed' %}selected{% endif %}>Passed</option>
-                        <option value="N/A" {% if test_data.status=='N/A' %}selected{% endif %}>N/A</option>
-                    </select>
-                </div>    
-            </fieldset>
-            <div class="mb-3">
-                <label for="conclusion" class="form-label">Conclusion</label>
-                <select class="form-select" name="conclusion" onchange="">
-                    <option value="" {% if test_data.conclusion=='' %}selected{% endif %}></option>
-                    <option value="Passed" {% if test_data.conclusion=='Passed' %}selected{% endif %}>Passed</option>
-                    <option value="Failed" {% if test_data.conclusion=='Failed' %}selected{% endif %}>Failed</option>
-                    <option value="Not Applicable" {% if test_data.conclusion=='Not Applicable' %}selected{% endif %}>N/A
-                    </option>
-                </select>
-            </div>
-         
-            <div class="mb-3">
-                <label for="date" class="form-label">Date</label>
-                <input type="date" class="form-control" id="date" name="date" value="{{ test_data.date }}" required>
             </div>
 
-            <div class="mb-3">
-                <label for="photo" class="form-label">Upload Photo</label>
-                <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+            <!-- Main Form -->
+            <div class="col-md-8">
+                <!-- Your main form HTML here -->
+
+                <div class="container">
+                    <h1 class="mb-4">{{ test }} - {{ test_data.title }}</h1>
+                    <form action="{{ url_for('test_form', smo=smo, test=test) }}" method="post"
+                        enctype="multipart/form-data">
+
+                        <fieldset class="mb-3">
+                            <legend>Requirments</legend>
+                            <div class="mb-3">
+                                <label>
+                                    <test_data class="method">{{ test_data.requirments }}
+                                </label>
+                            </div>
+                        </fieldset>
+
+                        <div class="mb-3">
+                            <label for="operator" class="form-label">Operator</label>
+                            <input type="text" class="form-control" id="operator" name="operator"
+                                value="{{ test_data.operator }}">
+                        </div>
+                        <fieldset class="mb-3">
+                            <legend>Method</legend>
+                            <div class="mb-3">
+                                <label>
+                                    <test_data class="method">{{ test_data.method }}
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="method-comment" class="form-label">Method Comment</label>
+                                <textarea class="form-control" id="method-comment" name="method-comment"
+                                    rows="3">{{ test_data['method-comment'] }}</textarea>
+                            </div>
+                        </fieldset>
+                        <fieldset class="mb-3">
+                            <legend>Criteria</legend>
+                            <div class="mb-3">
+                                <label>
+                                    <test_data class="method">{{ test_data.criteria }}
+                                </label>
+                            </div>
+                            <div class="mb-3">
+                                <label for="criteria-comment" class="form-label">Criteria Comment</label>
+                                <textarea class="form-control" id="criteria-comment" name="criteria-comment"
+                                    rows="3">{{ test_data['criteria-comment'] }}</textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" name="status">
+                                    <option value="not started" {% if test_data.status=='not started' %}selected{% endif
+                                        %}>
+                                        Not Started
+                                    </option>
+                                    <option value="High" {% if test_data.status=='High' %}selected{% endif %}>High
+                                    </option>
+                                    <option value="medium" {% if test_data.status=='medium' %}selected{% endif %}>Medium
+                                    </option>
+                                    <option value="low" {% if test_data.status=='low' %}selected{% endif %}>Low</option>
+                                    <option value="passed" {% if test_data.status=='passed' %}selected{% endif %}>Passed
+                                    </option>
+                                    <option value="N/A" {% if test_data.status=='N/A' %}selected{% endif %}>N/A</option>
+                                </select>
+                            </div>
+                        </fieldset>
+                        <div class="mb-3">
+                            <label for="conclusion" class="form-label">Conclusion</label>
+                            <select class="form-select" name="conclusion" onchange="">
+                                <option value="" {% if test_data.conclusion=='' %}selected{% endif %}></option>
+                                <option value="Passed" {% if test_data.conclusion=='Passed' %}selected{% endif %}>Passed
+                                </option>
+                                <option value="Failed" {% if test_data.conclusion=='Failed' %}selected{% endif %}>Failed
+                                </option>
+                                <option value="Not Applicable" {% if test_data.conclusion=='Not Applicable' %}selected{%
+                                    endif %}>N/A
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="date" name="date" value="{{ test_data.date }}"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="photo" class="form-label">Upload Photo</label>
+                            <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="other-file" class="form-label">Upload Other File</label>
+                            <input type="file" class="form-control" id="other-file" name="other-file" accept="*">
+                        </div>
+
+                        <!-- Add more form elements for other test data fields -->
+
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
             </div>
-
-            <div class="mb-3">
-                <label for="other-file" class="form-label">Upload Other File</label>
-                <input type="file" class="form-control" id="other-file" name="other-file" accept="*">
-            </div>
-
-            <!-- Add more form elements for other test data fields -->
-
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -161,6 +198,18 @@
     <script>
         var This_page_url = "{{ request.url }}";
     </script>
+
+    <!-- Insert this block wherever you want the file list to appear -->
+    <div class="panel panel-default">
+        <div class="panel-heading">Uploaded Files</div>
+        <div class="panel-body">
+            <ul>
+                {% for file in files %}
+                <li><a href="{{ url_for('static', filename=file) }}">{{ file }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 </body>
 
 </html>

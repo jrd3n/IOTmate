@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, url_for,redirect
+from flask import Flask, render_template, request, jsonify, url_for,redirect, send_file
 from werkzeug.utils import secure_filename
 import json
 import os
@@ -36,6 +36,16 @@ ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png', 'gif'}
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+
+
+
+
+
+    
+
+
+
 @app.route('/<smo>/<test>', methods=['GET', 'POST'])
 def test_form(smo, test):
 
@@ -52,6 +62,9 @@ def test_form(smo, test):
         "conclusion": ""
     }
 
+    # After line where app.config['UPLOAD_FOLDER'] is set
+    app.config['UPLOAD_FOLDER'] = f'data/{smo}/{test}/'
+
     if request.method == 'POST':
 
                 # Check if there is a file uploaded
@@ -60,7 +73,7 @@ def test_form(smo, test):
             if photo and allowed_file(photo.filename):
                 filename = secure_filename(photo.filename)
 
-                app.config['UPLOAD_FOLDER'] = f'data/{smo}/{test}/'
+                #app.config['UPLOAD_FOLDER'] = f'data/{smo}/{test}/'
 
                 # Make sure the upload folder exists
                 if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -74,7 +87,7 @@ def test_form(smo, test):
             if other_file:
                 filename = secure_filename(other_file.filename)
 
-                app.config['UPLOAD_FOLDER'] = f'data/{smo}/{test}/'
+                #app.config['UPLOAD_FOLDER'] = f'data/{smo}/{test}/'
 
                 # Make sure the upload folder exists
                 if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -92,12 +105,16 @@ def test_form(smo, test):
 
         write_test_json_file(smo, test_data)
         return redirect(url_for('test_form', smo=smo, test=test))
+    
+    # List all files in upload directory
+    files = os.listdir(app.config['UPLOAD_FOLDER']) if os.path.exists(app.config['UPLOAD_FOLDER']) else []
 
     # Update default_test_data with the actual data from the JSON file
     actual_test_data = test_data.get(test, {})
     test_data_merged = {**default_test_data, **actual_test_data}
 
-    return render_template('test_form.html', test_data=test_data_merged, smo=smo, test=test, job_info=job_info)
+    # Include `files` in the `render_template` method
+    return render_template('test_form.html', test_data=test_data_merged, smo=smo, test=test, job_info=job_info, files=files)
 
 def read_test_json_file(smo):
     filepath = f'data/{smo}/test_data.json'
@@ -142,6 +159,14 @@ def test_toc(smo):
     job_info = read_job_json_file(smo)
     return render_template('test_toc.html', tests=tests, smo=smo, job_info=job_info)
 
+
+@app.route('/<smo>/<test>/download/<filename>')
+def download_file(filename,smo,test):
+
+    filepath = f'data/{smo}/{test}/{filename}'
+
+    return send_file(filepath, as_attachment=True) 
+
 @app.route('/<smo>/data', methods=['GET', 'POST'])
 def data(smo):
     job_file_path = f'data/{smo}/job.json'
@@ -184,4 +209,4 @@ def data(smo):
         return jsonify({'success': True})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=True)
+    app.run(host='0.0.0.0',debug=True , port=5001)
