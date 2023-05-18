@@ -71,15 +71,15 @@
 
             <!-- Left Panel -->
             <div class="col-md-2">
-
-                <div class="card mt-2" >
+                <div class="card mt-2" style="position: fixed; width: 16%;">
                     <div class="card-body">
-                        <div class="card-header"><h5>Files</h5></div>
-                        <ul class="list-group list-group-flush>" style=" margin-top: 10px; margin-left: 5px; ">
+                        <div class="card-header">
+                            <h5>Files</h5>
+                        </div>
+                        <ul class="list-group list-group-flush>" style=" margin-top: 10px; margin-left: 10px;">
                             {% for file in files %}
                             <li><a href="/{{smo}}/{{test}}/download/{{file}}" download>{{ file }}</a></li>
                             {% endfor %}
-                            
                         </ul>
                     </div>
                 </div>
@@ -199,17 +199,7 @@
         var This_page_url = "{{ request.url }}";
     </script>
 
-    <!-- Insert this block wherever you want the file list to appear -->
-    <div class="panel panel-default">
-        <div class="panel-heading">Uploaded Files</div>
-        <div class="panel-body">
-            <ul>
-                {% for file in files %}
-                <li><a href="{{ url_for('static', filename=file) }}">{{ file }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
+
 </body>
 
 </html>
