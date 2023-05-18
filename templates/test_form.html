@@ -78,8 +78,15 @@
                         </div>
                         <ul class="list-group list-group-flush>" style=" margin-top: 10px; margin-left: 10px;">
                             {% for file in files %}
-                            <li><a href="/{{smo}}/{{test}}/download/{{file}}" download>{{ file }}</a></li>
+                            <li draggable="true" id="{{file}}" class="draggable">
+                                <a href="/{{smo}}/{{test}}/download/{{file}}" download
+                                    data-img-src="/{{smo}}/{{test}}/download/{{file}}" class="file-link">{{ file }}</a>
+                            </li>
                             {% endfor %}
+                            <div id="image-preview" style="display: none; position: absolute;">
+                                <img id="preview-img" src="" alt="Image preview"
+                                    style="max-width:200px; max-height:200px;">
+                            </div>
                         </ul>
                     </div>
                 </div>
@@ -117,7 +124,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="method-comment" class="form-label">Method Comment</label>
-                                <textarea class="form-control" id="method-comment" name="method-comment"
+                                <textarea class="form-control dropzone" id="method-comment" name="method-comment"
                                     rows="3">{{ test_data['method-comment'] }}</textarea>
                             </div>
                         </fieldset>
@@ -197,6 +204,55 @@
     <script src="{{ url_for('static', filename='qrcode_generator.js') }}"></script>
     <script>
         var This_page_url = "{{ request.url }}";
+    </script>
+    <script>
+        $(document).ready(function () {
+            $(".file-link").hover(function (e) {
+                var imgSrc = $(this).data('img-src');
+                if (imgSrc) {
+                    $("#preview-img").attr('src', imgSrc);
+                    $("#image-preview").css({ top: e.pageY, left: e.pageX }).fadeIn();
+                }
+            }, function () {
+                $("#image-preview").fadeOut();
+            });
+        });
+    </script>
+    <script>
+        let dragged;
+
+        /* events fired on the draggable target */
+        document.addEventListener("dragstart", function (event) {
+            // store a ref. on the dragged elem
+            dragged = event.target;
+            // make it half transparent
+            event.target.style.opacity = .5;
+        }, false);
+
+        document.addEventListener("dragend", function (event) {
+            // reset the transparency
+            event.target.style.opacity = "";
+        }, false);
+
+        /* events fired on the drop targets */
+        document.addEventListener("dragover", function (event) {
+            // prevent default to allow drop
+            event.preventDefault();
+        }, false);
+
+        document.addEventListener("drop", function (event) {
+            // prevent default action (open as link for some elements)
+            event.preventDefault();
+            if (event.target.className == "form-control dropzone") {
+                // insert dragged element's text into comment box at cursor position
+                const dropzone = event.target;
+                const selectionStart = dropzone.selectionStart;
+                const selectionEnd = dropzone.selectionEnd;
+                const textBefore = dropzone.value.substring(0, selectionStart);
+                const textAfter = dropzone.value.substring(selectionEnd, dropzone.value.length);
+                dropzone.value = textBefore + "![" + dragged.innerText + "]<img>"+ textAfter;
+            }
+        }, false);
     </script>
 
 
