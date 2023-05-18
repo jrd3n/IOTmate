@@ -1,6 +1,16 @@
 # Kanban-webserver-with-PM
 
-## Goals
+## install
 
-* Create a means for an operator to complete a test and log the results in a single place.
-* The tasks change between jobs, so allow the jobs to be set up with differnet tasks.
+```bash
+
+    wget https://github.com/jrd3n/Kanban-webserver-with-PM/archive/refs/heads/master.zip
+    unzip ./master.zip
+    cd Kanban-webserver-with-PM
+    python3 -m venv ./venv
+    mkdir ./data
+    source ./venv/bin/activate
+    pip install -r ./requirments.txt
+    python3 app.py
+    
+```
