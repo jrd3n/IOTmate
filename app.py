@@ -69,6 +69,21 @@ def test_form(smo, test):
                 photo.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 test_data[test]['photo_path'] = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
+        if 'other-file' in request.files:
+            other_file = request.files['other-file']
+            if other_file:
+                filename = secure_filename(other_file.filename)
+
+                app.config['UPLOAD_FOLDER'] = f'data/{smo}/{test}/'
+
+                # Make sure the upload folder exists
+                if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                    os.makedirs(app.config['UPLOAD_FOLDER'])
+
+                other_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+                test_data[test]['other_files'] = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                # Handle the uploaded file as needed
+
         # Handle form submission
         for field in request.form:
             submitted_value = request.form.get(field)

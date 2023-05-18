@@ -131,17 +131,21 @@
                     </option>
                 </select>
             </div>
-            <div class="mb-3">
-                <label for="photo" class="form-label">Upload Photo</label>
-                <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
-            </div>
-            
-
+         
             <div class="mb-3">
                 <label for="date" class="form-label">Date</label>
                 <input type="date" class="form-control" id="date" name="date" value="{{ test_data.date }}" required>
             </div>
 
+            <div class="mb-3">
+                <label for="photo" class="form-label">Upload Photo</label>
+                <input type="file" class="form-control" id="photo" name="photo" accept="image/*">
+            </div>
+
+            <div class="mb-3">
+                <label for="other-file" class="form-label">Upload Other File</label>
+                <input type="file" class="form-control" id="other-file" name="other-file" accept="*">
+            </div>
 
             <!-- Add more form elements for other test data fields -->
 
