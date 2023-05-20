@@ -22,7 +22,6 @@
             <div>
                 <a class="btn btn-primary open-modal-button" data-bs-dismiss="offcanvas">Add Job</a>
             </div>
-            <div id="qrcode"></div>
         </div>
     </div>
 
@@ -52,8 +51,8 @@
                         <ul class="list-group list-group-flush" style="margin-top: 10px; margin-left: 10px;">
                             {% for file in files %}
                             <li draggable="true" id="{{file}}" class="draggable">
-                                <a href="/{{smo}}/download/{{file}}" download
-                                    data-img-src="/{{smo}}/download/{{file}}" class="file-link">{{ file }}</a>
+                                <a href="/{{smo}}/download/{{file}}" download data-img-src="/{{smo}}/download/{{file}}"
+                                    class="file-link">{{ file }}</a>
                             </li>
                             {% endfor %}
                             <div id="image-preview" style="display: none; position: fixed;">
@@ -71,10 +70,6 @@
                                     <button type="submit" class="btn btn-primary">Upload</button>
                                 </div>
                             </form>
-                        </div>
-
-                        <div style="margin-top: 20px; justify-self: stretch; width: fit-content;">
-                            <div id="qrcode"></div>
                         </div>
                     </div>
                 </div>
@@ -151,7 +146,21 @@
                     </tbody>
                 </table>
             </div>
+
+            <div class="col-md-2">
+                <div class="card mt-2" style="position: fixed; width: 15%;">
+                    <div class="card-body">
+                        <div class="card-header">
+                            <h5>QR</h5>
+                        </div>
+                        <div style="margin-top: 20px; justify-self: stretch; width: fit-content;">
+                            <div id="qrcode"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+    </div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

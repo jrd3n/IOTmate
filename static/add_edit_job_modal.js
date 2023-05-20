@@ -28,7 +28,6 @@ $(document).ready(function () {
                                 <label for="standard" class="form-label">Standard</label>
                                 <input type="text" class="form-control" id="standard" name="standard">
                             </div>
-
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
                                 <select class="form-control" id="status" name="status">
@@ -40,10 +39,6 @@ $(document).ready(function () {
                                     <option value="disposal">Awaiting Disposal</option>
                                     <option value="archive">Archive</option>
                                 </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="test_data_file" class="form-label">Upload test_data.cvs</label>
-                                <input type="file" class="form-control" id="test_data_file" accept=".cvs">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
