@@ -12,7 +12,8 @@
 
 <body>
 
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" style="z-index: 5000;">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel"
+        style="z-index: 5000;">
         <div class="offcanvas-header">
             <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
             <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -29,84 +30,129 @@
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index')}}">Tests TOC</a>
             <span class="navbar-text">
-                Job Number: {{ job_info.job_number }} | Client: {{ job_info.client }} | Standard: {{ job_info.Standard }}
+                Job Number: {{ job_info.job_number }} | Client: {{ job_info.client }} | Standard: {{ job_info.Standard
+                }}
             </span>
-            <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+            <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
                 <span class="navbar-toggler-icon"></span>
             </button>
         </div>
     </nav>
 
-    <div class="container">
-        <h1 class="mb-4">Tests</h1>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- LEFT PANEL GOES HERE -->
+            <div class="col-md-2">
+                <div class="card mt-2" style="position: fixed; width: 16%;">
+                    <div class="card-body">
+                        <div class="card-header">
+                            <h5>Files</h5>
+                        </div>
+                        <ul class="list-group list-group-flush" style="margin-top: 10px; margin-left: 10px;">
+                            {% for file in files %}
+                            <li draggable="true" id="{{file}}" class="draggable">
+                                <a href="/{{smo}}/download/{{file}}" download
+                                    data-img-src="/{{smo}}/download/{{file}}" class="file-link">{{ file }}</a>
+                            </li>
+                            {% endfor %}
+                            <div id="image-preview" style="display: none; position: fixed;">
+                                <img id="preview-img" src="" alt="Image preview"
+                                    style="max-width:300px; max-height:300px;">
+                            </div>
+                        </ul>
+                        <div style="margin-top: 20px;">
+                            <form action="/upload" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="smo" value="{{ smo }}">
+                                <input type="hidden" name="test" value="">
+                                <input type="hidden" name="next" value="{{ request.url }}">
+                                <div class="input-group">
+                                    <input type="file" class="form-control" name="file" id="file-input">
+                                    <button type="submit" class="btn btn-primary">Upload</button>
+                                </div>
+                            </form>
+                        </div>
 
-        <!-- Not Complete Table -->
-        <h2>Not Complete</h2>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Number</th>
-                    <th>Title</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for test_number, test in tests.items() if test.conclusion == '' %}
-                {% set row_class = '' %}
-                {% if test.status == 'not started' %}
-                {% set row_class = 'table-warning' %}
-                {% elif test.status == 'High' %}
-                {% set row_class = 'table-danger' %}
-                {% elif test.status == 'medium' %}
-                {% set row_class = 'table-info' %}
-                {% elif test.status == 'low' %}
-                {% set row_class = 'table-primary' %}
-                {% elif test.status == 'N/A' %}
-                {% set row_class = 'table-secondary' %}
-                {% endif %}
-                <tr class="{{ row_class }}">
-                    <td><a href="{{ url_for('test_form', smo=smo, test=test_number) }}">{{ test_number }}</a></td>
-                    <td>{{ test.title }}</td>
-                    <td>{{ test.status }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                        <div style="margin-top: 20px; justify-self: stretch; width: fit-content;">
+                            <div id="qrcode"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-8">
 
-        <!-- Complete Table -->
-        <h2>Complete</h2>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Number</th>
-                    <th>Title</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for test_number, test in tests.items() if test.conclusion != '' %}
-                {% set row_class = '' %}
-                {% if test.status == 'not started' %}
-                {% set row_class = 'table-warning' %}
-                {% elif test.status == 'High' %}
-                {% set row_class = 'table-danger' %}
-                {% elif test.status == 'medium' %}
-                {% set row_class = 'table-info' %}
-                {% elif test.status == 'low' %}
-                {% set row_class = 'table-primary' %}
-                {% elif test.status == 'N/A' %}
-                {% set row_class = 'table-secondary' %}
-                {% endif %}
-                <tr class="{{ row_class }}">
-                    <td><a href="{{ url_for('test_form', smo=smo, test=test_number) }}">{{ test_number }}</a></td>
-                    <td>{{ test.title }}</td>
-                    <td>{{ test.status }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                <h1 class="mb-4">Tests</h1>
+
+                <!-- Not Complete Table -->
+                <h2>Not Complete</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for test_number, test in tests.items() if test.conclusion == '' %}
+                        {% set row_class = '' %}
+                        {% if test.status == 'not started' %}
+                        {% set row_class = 'table-warning' %}
+                        {% elif test.status == 'High' %}
+                        {% set row_class = 'table-danger' %}
+                        {% elif test.status == 'medium' %}
+                        {% set row_class = 'table-info' %}
+                        {% elif test.status == 'low' %}
+                        {% set row_class = 'table-primary' %}
+                        {% elif test.status == 'N/A' %}
+                        {% set row_class = 'table-secondary' %}
+                        {% endif %}
+                        <tr class="{{ row_class }}">
+                            <td><a href="{{ url_for('test_form', smo=smo, test=test_number) }}">{{ test_number }}</a>
+                            </td>
+                            <td>{{ test.title }}</td>
+                            <td>{{ test.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Complete Table -->
+                <h2>Complete</h2>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Number</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for test_number, test in tests.items() if test.conclusion != '' %}
+                        {% set row_class = '' %}
+                        {% if test.status == 'not started' %}
+                        {% set row_class = 'table-warning' %}
+                        {% elif test.status == 'High' %}
+                        {% set row_class = 'table-danger' %}
+                        {% elif test.status == 'medium' %}
+                        {% set row_class = 'table-info' %}
+                        {% elif test.status == 'low' %}
+                        {% set row_class = 'table-primary' %}
+                        {% elif test.status == 'N/A' %}
+                        {% set row_class = 'table-secondary' %}
+                        {% endif %}
+                        <tr class="{{ row_class }}">
+                            <td><a href="{{ url_for('test_form', smo=smo, test=test_number) }}">{{ test_number }}</a>
+                            </td>
+                            <td>{{ test.title }}</td>
+                            <td>{{ test.status }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
