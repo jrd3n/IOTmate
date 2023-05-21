@@ -1,58 +1,37 @@
 from flask import Flask, render_template, request, jsonify, url_for,redirect, send_file
 from werkzeug.utils import secure_filename
+import openpyxl
+import pandas as pd
 import json
 import os
 
 app = Flask(__name__, static_url_path='/static')
 
-def write_test_json_file(smo, data):
-    filepath = f'data/{smo}/test_data.json'
-    with open(filepath, 'w') as file:
-        json.dump(data, file)
+def write_json_to_excel(folder_path,file_name,json):
 
-def read_file(folder_path,file_name):
-    job_file_path = os.path.join(folder_path, file_name)
-    if os.path.exists(job_file_path):
-        with open(job_file_path, 'r') as file:
+    full_file_path = os.path.join(folder_path, file_name)
+    if os.path.exists(full_file_path):
+        with open(full_file_path, 'r') as file:
             json_data = json.load(file)
 
-    return json_data
+def read_json_from_excel(folder_path,file_name):
 
-def read_test_json_file(smo):
-    filepath = f'data/{smo}/test_data.json'
-    
-    try:
-        with open(filepath, 'r') as file:
-            data = json.load(file)
-    except FileNotFoundError:
-        print(f"No test_data.json file found in the folder data/{smo}")
+    full_file_path = os.path.join(folder_path, file_name)
+    if os.path.exists(full_file_path):
 
-        empty_dict = {"Empty": {
-                                "title": "",
-                                "requirments": "",
-                                "operator": "",
-                                "date": "",
-                                "status": "",
-                                "method": "",
-                                "criteria": "",
-                                "conclusion": "",
-                                "method-comment": "",
-                                "criteria-comment": ""
-                            }
-                                }
-        data = empty_dict  # Directly return the empty dictionary
-    
-    return data
+        # Load the Excel file
+        df = pd.read_excel(full_file_path)
 
-def read_job_json_file(smo):
-    job_file_path = f'data/{smo}/job.json'
-    
-    if os.path.exists(job_file_path):
-        with open(job_file_path, 'r') as file:
-            job_data = json.load(file)
-            return job_data
+        # Convert the DataFrame back to a dictionary
+        data = df.to_dict(orient='records')
+
+        #print(data)
+
+        return data
+
     else:
-        return {}
+        print("ERROR NO FILE NAMED {file_name} in folder {folder_path}".format(file_name=file_name,folder_path=folder_path))
+        pass
 
 @app.route('/')
 def index():
@@ -67,7 +46,7 @@ def get_all_jobs():
         folder_path = os.path.join(data_dir, folder)
 
         if os.path.isdir(folder_path):
-            job_data = read_file(folder_path, 'job.json')
+            job_data = read_json_from_excel(folder_path, 'job_information.xlsx')
             all_jobs.append(job_data)
 
     return jsonify(all_jobs)
@@ -113,59 +92,60 @@ def handle_upload():
 @app.route('/<smo>/<test>', methods=['GET', 'POST'])
 def test_form(smo, test):
 
-    test_data = read_test_json_file(smo)
-    job_info = read_job_json_file(smo)
+    test_number = test
 
-    default_test_data = {
-        "title": "",
-        "operator": "",
-        "date": "",
-        "status": "",
-        "method": "",
-        "criteria": "",
-        "conclusion": ""
-    }
+    folder_path = f'data/{smo}/'
+
+    all_test_data = read_json_from_excel(folder_path,file_name="test_data.xlsx")
+    job_data = read_json_from_excel(folder_path, 'job_information.xlsx')
+
+    # print(all_test_data)
+
+    filtered_test = [test for test in all_test_data if test["Number"].strip() == test_number]
+
+    if filtered_test:  # check if the filtered_test list is not empty
+        filtered_test = filtered_test[0]  # Get the first (and should be the only) item in the list
+    else:
+        print(f"No test with Number: {test_number} found.")
+
+    #print(filtered_test)
 
     if request.method == 'POST':
 
         # Handle form submission
         for field in request.form:
             submitted_value = request.form.get(field)
-            if test_data[test].get(field) != submitted_value:
-                test_data[test][field] = submitted_value
+            if test_data[test_number].get(field) != submitted_value:
+                test_data[test_number][field] = submitted_value
 
         write_test_json_file(smo, test_data)
-        return redirect(url_for('test_form', smo=smo, test=test))
+        return redirect(url_for('test_form', smo=smo, test=test_number))
     
     # After line where app.config['UPLOAD_FOLDER'] is set
-    app.config['UPLOAD_FOLDER'] = f'data/{smo}/{test}/'
+    app.config['UPLOAD_FOLDER'] = f'data/{smo}/{test_number}/'
     
     # List all files in upload directory
     files = os.listdir(app.config['UPLOAD_FOLDER']) if os.path.exists(app.config['UPLOAD_FOLDER']) else []
 
-    # Update default_test_data with the actual data from the JSON file
-    actual_test_data = test_data.get(test, {})
-    test_data_merged = {**default_test_data, **actual_test_data}
-
     # Include `files` in the `render_template` method
-    return render_template('test_form.html', test_data=test_data_merged, smo=smo, test=test, job_info=job_info, files=files)
+    return render_template('test_form.html', test_data=filtered_test, smo=smo, job_info=job_data, files=files)
 
 @app.route('/<smo>')
 def test_toc(smo):
-    tests = read_test_json_file(smo)
-    #print(tests)
+    folder_path = f'data/{smo}/'
+    tests = read_json_from_excel(folder_path=folder_path,file_name="test_data.xlsx")
 
     # After line where app.config['UPLOAD_FOLDER'] is set
     app.config['UPLOAD_FOLDER'] = f'data/{smo}/'
     
-    # List all files in upload directory
     # List all files in upload directory
     if os.path.exists(app.config['UPLOAD_FOLDER']):
         files = [f for f in os.listdir(app.config['UPLOAD_FOLDER']) if os.path.isfile(os.path.join(app.config['UPLOAD_FOLDER'], f))]
     else:
         files = []
 
-    job_info = read_job_json_file(smo)
+    job_info = read_json_from_excel(folder_path=folder_path,file_name="job_information.xlsx")
+
     return render_template('test_toc.html', tests=tests, smo=smo, job_info=job_info, files=files)
 
 @app.route('/<smo>/<test>/download/<filename>')

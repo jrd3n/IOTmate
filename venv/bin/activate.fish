@@ -33,7 +33,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/jordon/Documents/flask_stuff/venv"
+set -gx VIRTUAL_ENV "/home/jordon/Documents/IoT_Project_Web/Kanban-webserver-with-PM/Kanban-webserver-with-PM/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

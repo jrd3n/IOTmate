@@ -28,8 +28,7 @@
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('test_toc', smo=smo) }}">Test form</a>
             <span class="navbar-text">
-                Job Number: {{ job_info.job_number }} | Client: {{ job_info.client }} | Standard: {{
-                job_info.Standard }}
+                Job Number: {{ job_info.SMO }} | Client: {{ job_info['Client Name'] }} | Standard: {{ job_info.Standard }}
             </span>
             <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
@@ -41,7 +40,6 @@
     <div class="container-fluid">
         <div class="row">
 
-
             <!-- LEFT PANEL GOES HERE -->
             <div class="col-md-2">
                 <div class="card mt-2" style="position: fixed; width: 16%;">
@@ -52,7 +50,7 @@
                         <ul class="list-group list-group-flush" style="margin-top: 10px; margin-left: 10px;">
                             {% for file in files %}
                             <li draggable="true" id="{{file}}" class="draggable">
-                                <a href="/{{smo}}/{{test}}/download/{{file}}" download
+                                <a href="/{{smo}}/{{test_data["Number"]}}/download/{{file}}" download
                                     data-img-src="/{{smo}}/{{test}}/download/{{file}}" class="file-link">{{ file }}</a>
                             </li>
                             {% endfor %}
@@ -83,15 +81,15 @@
                 <!-- Your main form HTML here -->
 
                 <div class="container">
-                    <h1 class="mb-4">{{ test }} - {{ test_data.title }}</h1>
+                    <h1 class="mb-4">{{ test_data["Number"] }} - {{ test_data["Requirement"]  }}</h1>
                     <form action="{{ url_for('test_form', smo=smo, test=test) }}" method="post"
                         enctype="multipart/form-data">
 
                         <fieldset class="mb-3">
-                            <legend>Requirments</legend>
+                            <legend>Requirements</legend>
                             <div class="mb-3">
                                 <label>
-                                    <test_data class="method">{{ test_data.requirments }}
+                                    <test_data class="method">{{ test_data["Requirement"] }}
                                 </label>
                             </div>
                         </fieldset>
@@ -99,13 +97,13 @@
                         <div class="mb-3">
                             <label for="operator" class="form-label">Operator</label>
                             <input type="text" class="form-control" id="operator" name="operator"
-                                value="{{ test_data.operator }}">
+                                value='{{ test_data["Operator"] }}'>
                         </div>
                         <fieldset class="mb-3">
                             <legend>Method</legend>
                             <div class="mb-3">
                                 <label>
-                                    <test_data class="method">{{ test_data.method }}
+                                    <test_data class="method">{{ test_data.Methodology }}
                                 </label>
                             </div>
                             <div class="mb-3">
@@ -118,7 +116,7 @@
                             <legend>Criteria</legend>
                             <div class="mb-3">
                                 <label>
-                                    <test_data class="method">{{ test_data.criteria }}
+                                    <test_data class="method">{{ test_data['Test Criteria'] }}
                                 </label>
                             </div>
                             <div class="mb-3">
@@ -129,18 +127,19 @@
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
                                 <select class="form-select" name="status">
-                                    <option value="not started" {% if test_data.status=='not started' %}selected{% endif
+                                    <option value="not started" {% if test_data['Status'].lower() == 'Nan' %}selected{% endif %}>
+                                    </option>
+                                    <option value="not started" {% if test_data['Status']=='not started' %}selected{% endif
                                         %}>
-                                        Not Started
                                     </option>
-                                    <option value="High" {% if test_data.status=='High' %}selected{% endif %}>High
+                                    <option value="High" {% if test_data['Status']=='High' %}selected{% endif %}>High
                                     </option>
-                                    <option value="medium" {% if test_data.status=='medium' %}selected{% endif %}>Medium
+                                    <option value="medium" {% if test_data['Status']=='medium' %}selected{% endif %}>Medium
                                     </option>
-                                    <option value="low" {% if test_data.status=='low' %}selected{% endif %}>Low</option>
-                                    <option value="passed" {% if test_data.status=='passed' %}selected{% endif %}>Passed
+                                    <option value="low" {% if test_data['Status']=='low' %}selected{% endif %}>Low</option>
+                                    <option value="passed" {% if test_data['Status']=='passed' %}selected{% endif %}>Passed
                                     </option>
-                                    <option value="N/A" {% if test_data.status=='N/A' %}selected{% endif %}>N/A</option>
+                                    <option value="N/A" {% if test_data['Status']=='N/A' %}selected{% endif %}>N/A</option>
                                 </select>
                             </div>
                         </fieldset>
@@ -160,7 +159,7 @@
 
                         <div class="mb-3">
                             <label for="date" class="form-label">Date</label>
-                            <input type="date" class="form-control" id="date" name="date" value="{{ test_data.date }}"
+                            <input type="date" class="form-control" id="date" name="date" value="{{ test_data['Date of Test'] }}"
                                 required>
                         </div>
 

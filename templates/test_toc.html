@@ -29,8 +29,8 @@
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('index')}}">Tests TOC</a>
             <span class="navbar-text">
-                Job Number: {{ job_info.job_number }} | Client: {{ job_info.client }} | Standard: {{ job_info.Standard
-                }}
+                Job Number: {{ job_info[0]['SMO'] }} | Client: {{ job_info[0]['Client Name'] }} | Standard: {{
+                job_info[0]['Standard'] }}
             </span>
             <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
@@ -89,25 +89,26 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for test_number, test in tests.items() if test.conclusion == '' %}
+                        {% for test in tests if test.Conclusion != test.Conclusion %}
                         {% set row_class = '' %}
-                        {% if test.status == 'not started' %}
+                        {% if test.Status == 'not started' %}
                         {% set row_class = 'table-warning' %}
-                        {% elif test.status == 'High' %}
+                        {% elif test.Status == 'High' or test.Status == 'Failed' %}
                         {% set row_class = 'table-danger' %}
-                        {% elif test.status == 'medium' %}
+                        {% elif test.Status == 'medium' %}
                         {% set row_class = 'table-info' %}
-                        {% elif test.status == 'low' %}
+                        {% elif test.Status == 'low' %}
                         {% set row_class = 'table-primary' %}
-                        {% elif test.status == 'N/A' %}
+                        {% elif test.Status == 'N/A' %}
                         {% set row_class = 'table-secondary' %}
                         {% endif %}
-                        <tr class="{{ row_class }}">
-                            <td><a href="{{ url_for('test_form', smo=smo, test=test_number) }}">{{ test_number }}</a>
-                            </td>
-                            <td>{{ test.title }}</td>
-                            <td>{{ test.status }}</td>
+                        <tr class="{{ row_class }}" onclick="window.location='{{ url_for('test_form', smo=smo, test=test.Number|trim) }}';" style="cursor: pointer;">
+                            <td>{{ test.Number|trim }}</td>
+                            <td>{{ test.Requirement }}</td>
+                            <td>{{ test.Status }}</td>
                         </tr>
+                        
+                        
                         {% endfor %}
                     </tbody>
                 </table>
@@ -123,27 +124,29 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for test_number, test in tests.items() if test.conclusion != '' %}
+                        {% for test in tests if test.Conclusion == test.Conclusion %}
                         {% set row_class = '' %}
-                        {% if test.status == 'not started' %}
+                        {% if test.Status == 'not started' %}
                         {% set row_class = 'table-warning' %}
-                        {% elif test.status == 'High' %}
+                        {% elif test.Status == 'High' %}
                         {% set row_class = 'table-danger' %}
-                        {% elif test.status == 'medium' %}
+                        {% elif test.Status == 'medium' %}
                         {% set row_class = 'table-info' %}
-                        {% elif test.status == 'low' %}
+                        {% elif test.Status == 'low' %}
                         {% set row_class = 'table-primary' %}
-                        {% elif test.status == 'N/A' %}
+                        {% elif test.Status == 'N/A' %}
                         {% set row_class = 'table-secondary' %}
                         {% endif %}
-                        <tr class="{{ row_class }}">
-                            <td><a href="{{ url_for('test_form', smo=smo, test=test_number) }}">{{ test_number }}</a>
-                            </td>
-                            <td>{{ test.title }}</td>
-                            <td>{{ test.status }}</td>
+                        <tr class="{{ row_class }}" onclick="window.location='{{ url_for('test_form', smo=smo, test=test.Number|trim) }}';" style="cursor: pointer;">
+                            <td>{{ test.Number|trim }}</td>
+                            <td>{{ test.Requirement }}</td>
+                            <td>{{ test.Status }}</td>
                         </tr>
+                        
+
                         {% endfor %}
                     </tbody>
+
                 </table>
             </div>
 
