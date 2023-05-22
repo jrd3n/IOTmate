@@ -7,12 +7,68 @@ import os
 
 app = Flask(__name__, static_url_path='/static')
 
-def write_json_to_excel(folder_path,file_name,json):
+import pandas as pd
 
+def update_all_jobs_json():
+    data_dir = 'data/'
+
+    columns = {
+        "awaiting_samples": [],
+        "onsite": [],
+        "on_test": [],
+        "report_stage": [],
+        "report_sent": [],
+        "disposal": [],
+        "archive": []
+    }
+
+    for folder in os.listdir(data_dir):
+        folder_path = os.path.join(data_dir, folder)
+
+        if os.path.isdir(folder_path):
+            job_data = read_json_from_excel(folder_path, 'job_information.xlsx')  # Assuming you have a function to read job data from an Excel file
+            status = job_data[0].get("Status", "")
+
+            if status in columns:
+                columns[status].append(job_data[0])
+            else:
+                columns["archive"].append(job_data[0])
+
+    # Write columns to all_jobs.json
+    with open('static/all_jobs.json', 'w') as json_file:
+        json.dump(columns, json_file)
+
+def write_json_to_excel(folder_path, file_name, new_data, index_value):
     full_file_path = os.path.join(folder_path, file_name)
-    if os.path.exists(full_file_path):
-        with open(full_file_path, 'r') as file:
-            json_data = json.load(file)
+
+    # Load the Excel file into a DataFrame, using the first column as the index and as a string type
+    df = pd.read_excel(full_file_path, index_col=0, dtype={0: str})
+
+    # Now you can locate the row to update using the DataFrame index
+    row_to_update = df.index.astype(str) == str(index_value)
+
+    # print("Here")
+
+    # print(df.index.values)
+    # print(row_to_update)
+
+    # print(f"index_value: {index_value}")
+
+    # print(df.head())
+
+    # Assuming new_data is a dictionary like {"column1": value1, "column2": value2}
+    for column, value in new_data.items():
+        # print("row : {row}, column : {column} , value : {value}".format(row=row_to_update, column=column, value=value))
+        df.loc[row_to_update, column] = value
+
+    # Write the DataFrame back to the Excel file, keeping the DataFrame index
+    try:
+        df.to_excel(full_file_path, index=True)
+        update_all_jobs_json()
+        return True
+    except Exception as e:
+        print("Error while writing to Excel: ", e)
+        return False
 
 def read_json_from_excel(folder_path,file_name):
 
@@ -35,22 +91,6 @@ def read_json_from_excel(folder_path,file_name):
 
 @app.route('/')
 def index():
-
-    all_jobs = []
-    data_dir = 'data/'
-
-    for folder in os.listdir(data_dir):
-        folder_path = os.path.join(data_dir, folder)
-
-        if os.path.isdir(folder_path):
-            job_data = read_json_from_excel(folder_path, 'job_information.xlsx')
-            all_jobs.append(job_data[0])
-
-    #print(all_jobs)
-
-        # Write all_jobs to kanban.json
-    with open('static/all_jobs.json', 'w') as json_file:
-        json.dump(all_jobs, json_file)
 
     return render_template('index.html')
 
@@ -167,40 +207,25 @@ def download_file_from_job(filename,smo):
 
 @app.route('/<smo>/data', methods=['GET', 'POST'])
 def data(smo):
-    job_file_path = f'data/{smo}/job.json'
+
+    job_file_path = f'data/{smo}/'
 
     if request.method == 'GET':
-        if os.path.exists(job_file_path):
-            with open(job_file_path, 'r') as file:
-                job_data = json.load(file)
-                return jsonify(job_data)
-        else:
-            return jsonify({})
+
+        job_data = read_json_from_excel(job_file_path,'job_information.xlsx')
+
+        return jsonify(job_data)
         
     elif request.method == 'POST':
 
         new_data = request.json
 
-        smo_path = f"data/{smo}"
-    
-        if not os.path.exists(smo_path):
-            os.makedirs(smo_path)
-            
-            job_data = {
-                "job_name": "",
-                "client": "",
-                "location": "",
-                "start_date": "",
-                "end_date": "",
-                "description": ""
-            }
+        print("SMO: {smo} new status {new_data}".format(smo=smo,new_data=new_data))
 
-            with open(f"{smo_path}/job.json", 'w') as file:
-                json.dump(job_data, file)
+        written_bool = write_json_to_excel(job_file_path,'job_information.xlsx',new_data,smo)
 
-        with open(job_file_path, 'w') as file:
-            json.dump(new_data, file)
-        return jsonify({'success': True})
+        if written_bool == True:
+            return jsonify({'success': True})       
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True , port=5000)
