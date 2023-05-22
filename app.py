@@ -35,21 +35,24 @@ def read_json_from_excel(folder_path,file_name):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
 
-@app.route('/all_jobs', methods=['GET'])
-def get_all_jobs():
     all_jobs = []
-    data_dir = 'data'
+    data_dir = 'data/'
 
     for folder in os.listdir(data_dir):
         folder_path = os.path.join(data_dir, folder)
 
         if os.path.isdir(folder_path):
             job_data = read_json_from_excel(folder_path, 'job_information.xlsx')
-            all_jobs.append(job_data)
+            all_jobs.append(job_data[0])
 
-    return jsonify(all_jobs)
+    #print(all_jobs)
+
+        # Write all_jobs to kanban.json
+    with open('static/all_jobs.json', 'w') as json_file:
+        json.dump(all_jobs, json_file)
+
+    return render_template('index.html')
 
 @app.route('/upload', methods=['POST'])
 def handle_upload():
@@ -200,4 +203,4 @@ def data(smo):
         return jsonify({'success': True})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=True , port=5001)
+    app.run(host='0.0.0.0',debug=True , port=5000)

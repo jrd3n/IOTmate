@@ -12,21 +12,29 @@ const columns = {
 
 function loadData() {
     console.log('Loading data...');
-    fetch('/all_jobs')
+    fetch('/static/all_jobs.json')
         .then(response => response.json())
         .then(data => {
             console.log('Data received:', data);
+
             data.forEach(item => {
                 console.log(`Processing item: ${JSON.stringify(item)}`);
-                if (columns.hasOwnProperty(item.Status)) {
-                    columns[item.Status].push(item);
+
+
+
+                if (columns.hasOwnProperty(item["Status"])) {
+                    columns[item["Status"]].push(item);
                 } else {
-                    console.error(`Unknown status: ${item.Status}`);
+                    console.error(`Unknown status: ${item["Status"]}`);
                 }
             });
             renderColumns();
+        })
+        .catch(error => {
+            console.error(`Error loading all_jobs.json: ${error}`);
         });
 }
+
 
 function renderColumns() {
     console.log('Rendering columns...');
@@ -41,11 +49,11 @@ function renderColumns() {
                 const itemEl = document.createElement('div');
                 itemEl.classList.add('kanban-item', 'job-tile');
                 itemEl.innerHTML = `
-                  <a href="/${item.SMO}" style="text-decoration: none; color: inherit;">
-                    <h5>SMO:${item.SMO}</h5>
-                    <p>ER:${item.ER}</p>
-                    <h5>${item.client}</h5>
-                  </a>`;
+                    <a href="/${item.SMO}" style="text-decoration: none; color: inherit;">
+                        <h5>SMO:${item.SMO}</h5>
+                        <p>ER:${item.ER}</p>
+                        <h5>${item["Client Name"]}</h5>
+                    </a>`;
                 itemEl.dataset.job_number = item.SMO;
 
                 itemsEl.appendChild(itemEl);
@@ -55,7 +63,6 @@ function renderColumns() {
         }
     }
 }
-
 function updateData() {
     const allData = [];
     for (const key in columns) {
@@ -88,7 +95,6 @@ function updateData() {
 
         });
     }
-
 
 }
 
