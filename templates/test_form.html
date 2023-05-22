@@ -82,8 +82,7 @@
 
                 <div class="container">
                     <h1 class="mb-4">{{ test_data["Number"] }} - {{ test_data["Requirement"]  }}</h1>
-                    <form action="{{ url_for('test_form', smo=smo, test=test) }}" method="post"
-                        enctype="multipart/form-data">
+                    <form id="test-form" action="{{ url_for('test_form_submission', smo=smo, test=test_data["Number"]) }}" method="post">
 
                         <fieldset class="mb-3">
                             <legend>Requirements</legend>
@@ -95,8 +94,8 @@
                         </fieldset>
 
                         <div class="mb-3">
-                            <label for="operator" class="form-label">Operator</label>
-                            <input type="text" class="form-control" id="operator" name="operator"
+                            <label for="Operator" class="form-label">Operator</label>
+                            <input type="text" class="form-control" id="Operator" name="Operator"
                                 value='{{ test_data["Operator"] }}'>
                         </div>
                         <fieldset class="mb-3">
@@ -165,7 +164,8 @@
 
                         <!-- Add more form elements for other test data fields -->
 
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" id="submit-btn" class="btn btn-primary">Submit</button>
+                    
                     </form>
                 </div>
             </div>
@@ -196,6 +196,30 @@
     </script>
 
     <script src="{{ url_for('static', filename='left_panel.js') }}"></script>
+
+
+    <script>
+        document.getElementById("submit-btn").addEventListener("click", function () {
+            var form = document.getElementById("test-form");
+            var formData = new FormData(form);
+    
+            var jsonData = {};
+            formData.forEach(function (value, key) {
+                jsonData[key] = value;
+            });
+    
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", form.action, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    // Handle successful form submission
+                    window.location.reload(); // Reload the page or perform any other action
+                }
+            };
+            xhr.send(JSON.stringify(jsonData));
+        });
+    </script>
 
 </body>
 

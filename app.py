@@ -132,17 +132,13 @@ def handle_upload():
     next_url = request.form.get('next') or url_for('default_route')
     return redirect(next_url)
 
-@app.route('/<smo>/<test>', methods=['GET', 'POST'])
+@app.route('/<smo>/<test>', methods=['GET'])
 def test_form(smo, test):
-
     test_number = test
-
     folder_path = f'data/{smo}/'
 
-    all_test_data = read_json_from_excel(folder_path,file_name="test_data.xlsx")
+    all_test_data = read_json_from_excel(folder_path, file_name="test_data.xlsx")
     job_data = read_json_from_excel(folder_path, 'job_information.xlsx')
-
-    # print(all_test_data)
 
     filtered_test = [test for test in all_test_data if test["Number"].strip() == test_number]
 
@@ -151,27 +147,23 @@ def test_form(smo, test):
     else:
         print(f"No test with Number: {test_number} found.")
 
-    #print(filtered_test)
-
-    if request.method == 'POST':
-
-        # Handle form submission
-        for field in request.form:
-            submitted_value = request.form.get(field)
-            if test_data[test_number].get(field) != submitted_value:
-                test_data[test_number][field] = submitted_value
-
-        write_test_json_file(smo, test_data)
-        return redirect(url_for('test_form', smo=smo, test=test_number))
-    
-    # After line where app.config['UPLOAD_FOLDER'] is set
     app.config['UPLOAD_FOLDER'] = f'data/{smo}/{test_number}/'
-    
-    # List all files in upload directory
+
     files = os.listdir(app.config['UPLOAD_FOLDER']) if os.path.exists(app.config['UPLOAD_FOLDER']) else []
 
-    # Include `files` in the `render_template` method
     return render_template('test_form.html', test_data=filtered_test, smo=smo, job_info=job_data, files=files)
+
+
+@app.route('/<smo>/<test>', methods=['POST'])
+def test_form_submission(smo, test):
+    test_number = test
+    folder_path = f'data/{smo}/'
+
+    new_data = request.json
+
+    written_bool = write_json_to_excel(folder_path, 'test_data.xlsx', new_data, test)
+
+    return redirect(url_for('test_form', smo=smo, test=test_number))
 
 @app.route('/<smo>')
 def test_toc(smo):
