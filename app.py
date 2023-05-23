@@ -173,13 +173,14 @@ def test_form(smo, test):
 
     return render_template('test_form.html', test_data=filtered_test, smo=smo, job_info=job_data, files=files)
 
-
 @app.route('/<smo>/<test>', methods=['POST'])
 def test_form_submission(smo, test):
     test_number = test
     folder_path = f'data/{smo}/'
 
     new_data = request.json
+
+    print("SMO: {smo}, test :{test}, new data {new_data}".format(smo=smo,test=test,new_data=new_data))
 
     written_bool = write_json_to_excel(folder_path, 'test_data.xlsx', new_data, test)
 
