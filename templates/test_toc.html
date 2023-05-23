@@ -89,25 +89,34 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for test in tests if test.Conclusion != test.Conclusion %}
+                        {% for test in tests if test.Conclusion == "" %}
                         {% set row_class = '' %}
-                        {% if test.Status == 'not started' %}
+                        {% if test.Status == 'Not Started' or test.Status == '' %}
                         {% set row_class = 'table-warning' %}
                         {% elif test.Status == 'High' or test.Status == 'Failed' %}
                         {% set row_class = 'table-danger' %}
-                        {% elif test.Status == 'medium' %}
+                        {% elif test.Status == 'Medium' %}
                         {% set row_class = 'table-info' %}
-                        {% elif test.Status == 'low' %}
+                        {% elif test.Status == 'Low' %}
                         {% set row_class = 'table-primary' %}
                         {% elif test.Status == 'N/A' %}
                         {% set row_class = 'table-secondary' %}
+                        {% elif test.Status == 'Passed' %}
+                        {% set row_class = 'table-success' %}
                         {% endif %}
-                        <tr class="{{ row_class }}" onclick="window.location='{{ url_for('test_form', smo=smo, test=test.Number|trim) }}';" style="cursor: pointer;">
+
+                        <tr class="{{ row_class }}"
+                            onclick="window.location='{{ url_for('test_form', smo=smo, test=test.Number|trim) }}';"
+                            style="cursor: pointer;">
                             <td>{{ test.Number|trim }}</td>
                             <td>{{ test.Requirement }}</td>
-                            <td>{{ test.Status }}</td>
+                            <td>{% if test.Status == '' %}
+                                {{ 'Not Started' }}
+                                {% else  %}
+                                {{ test.Status }}</td>
+                                {% endif %}
                         </tr>
-                        
+
                         {% endfor %}
                     </tbody>
                 </table>
@@ -123,25 +132,34 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for test in tests if test.Conclusion == test.Conclusion %}
+                        {% for test in tests if test.Conclusion != "" %}
                         {% set row_class = '' %}
-                        {% if test.Status == 'not started' %}
+                        {% if test.Status == 'Not Started' or test.Status == '' %}
                         {% set row_class = 'table-warning' %}
-                        {% elif test.Status == 'High' %}
+                        {% elif test.Status == 'High' or test.Status == 'Failed' %}
                         {% set row_class = 'table-danger' %}
-                        {% elif test.Status == 'medium' %}
+                        {% elif test.Status == 'Medium' %}
                         {% set row_class = 'table-info' %}
-                        {% elif test.Status == 'low' %}
+                        {% elif test.Status == 'Low' %}
                         {% set row_class = 'table-primary' %}
                         {% elif test.Status == 'N/A' %}
                         {% set row_class = 'table-secondary' %}
+                        {% elif test.Status == 'Passed' %}
+                        {% set row_class = 'table-success' %}
                         {% endif %}
-                        <tr class="{{ row_class }}" onclick="window.location='{{ url_for('test_form', smo=smo, test=test.Number|trim) }}';" style="cursor: pointer;">
+
+                        <tr class="{{ row_class }}"
+                            onclick="window.location='{{ url_for('test_form', smo=smo, test=test.Number|trim) }}';"
+                            style="cursor: pointer;">
                             <td>{{ test.Number|trim }}</td>
                             <td>{{ test.Requirement }}</td>
-                            <td>{{ test.Status }}</td>
+                            <td>{% if test.Status == '' %}
+                                {{ 'Not Started' }}
+                                {% else  %}
+                                {{ test.Status }}</td>
+                                {% endif %}
                         </tr>
-                        
+
 
                         {% endfor %}
                     </tbody>
@@ -170,7 +188,7 @@
 
     <script src="{{ url_for('static', filename='add_edit_job_modal.js') }}"></script>
     <script>
-        var smo = "{{ job_info.job_number }}";
+        var smo = "{{ smo }}";
     </script>
 
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>

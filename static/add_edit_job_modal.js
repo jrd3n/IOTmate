@@ -14,23 +14,23 @@ $(document).ready(function () {
                         <form id="addJobForm" method="POST" onsubmit="Add_or_change_job_info(event);">
                             <div class="mb-3">
                                 <label for="smo" class="form-label">SMO</label>
-                                <input type="text" class="form-control" id="job_number" name="job_number" required>
+                                <input type="text" class="form-control" id="SMO" name="SMO" required>
                             </div>
                             <div class="mb-3">
                                 <label for="client" class="form-label">Client Name</label>
-                                <input type="text" class="form-control" id="client" name="client">
+                                <input type="text" class="form-control" id="Client Name " name="Client Name">
                             </div>
                             <div class="mb-3">
                                 <label for="er" class="form-label">ER number</label>
-                                <input type="text" class="form-control" id="er" name="er">
+                                <input type="text" class="form-control" id="ER" name="ER">
                             </div>
                             <div class="mb-3">
                                 <label for="standard" class="form-label">Standard</label>
-                                <input type="text" class="form-control" id="standard" name="standard">
+                                <input type="text" class="form-control" id="Standard" name="Standard">
                             </div>
                             <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
-                                <select class="form-control" id="status" name="status">
+                                <select class="form-control" id="Status" name="Status">
                                     <option value="awaiting_samples">Awaiting Samples</option>
                                     <option value="onsite">Samples Onsite</option>
                                     <option value="on_test">On Test</option>
@@ -61,23 +61,28 @@ $(document).ready(function () {
         if (smo !== "") {
             // Fetch data from the server
             fetch(`/${smo}/data`)
+                // console.log("Hello")
                 .then(response => response.json())
                 .then(data => {
+
+                    data = data[0]
+
+                    console.log(data)
                     // Update the modal with the received data
-                    $('#job_number').val(data.job_number);
-                    $('#client').val(data.client);
-                    $('#status').val(data.status);
-                    $('#er').val(data.er);
-                    $('#standard').val(data.standard);
+                    $('#SMO').val(data['SMO']);
+                    $('#client').val(data['Client Name']);
+                    $('#status').val(data.Status);
+                    $('#ER').val(data.ER);
+                    $('#standard').val(data.Standard);
                     // Update other fields as needed
                 })
                 .catch(error => {
                     console.error('Error fetching data:', error);
                 });
 
-            $('#job_number').prop('readonly', true);
+            $('#SMO').prop('readonly', true);
         } else {
-            $('#job_number').prop('readonly', false);
+            $('#SMO').prop('readonly', false);
         }
 
         $('#myModal').modal('show');
@@ -109,9 +114,9 @@ function Add_or_change_job_info(event) {
 
     console.log(Array.from(formData.entries()));
 
-    const jobNumberInput = document.querySelector('[name="job_number"]');
+    const jobNumberInput = document.querySelector('[name="SMO"]');
     const smo = jobNumberInput.value;
-    const url = "/" + smo + "/data";
+    const url = "/" + decodeURIComponent(smo) + "/data";
 
     const requestData = Object.fromEntries(formData.entries());
 

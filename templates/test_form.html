@@ -26,9 +26,10 @@
     <!-- Navbar -->
     <nav class="navbar navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('test_toc', smo=smo) }}">Test form</a>
+            <a class="navbar-brand" href="{{ url_for('test_toc', smo=smo|trim) }}">Test form</a>
             <span class="navbar-text">
-                Job Number: {{ job_info.SMO }} | Client: {{ job_info['Client Name'] }} | Standard: {{ job_info.Standard }}
+                Job Number: {{ job_info.SMO }} | Client: {{ job_info['Client Name'] }} | Standard: {{ job_info.Standard
+                }}
             </span>
             <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
@@ -50,7 +51,7 @@
                         <ul class="list-group list-group-flush" style="margin-top: 10px; margin-left: 10px;">
                             {% for file in files %}
                             <li draggable="true" id="{{file}}" class="draggable">
-                                <a href="/{{smo}}/{{test_data["Number"]}}/download/{{file}}" download
+                                <a href="/{{smo}}/{{test_data[" Number"]}}/download/{{file}}" download
                                     data-img-src="/{{smo}}/{{test}}/download/{{file}}" class="file-link">{{ file }}</a>
                             </li>
                             {% endfor %}
@@ -81,14 +82,15 @@
                 <!-- Your main form HTML here -->
 
                 <div class="container">
-                    <h1 class="mb-4">{{ test_data["Number"] }} - {{ test_data["Requirement"]  }}</h1>
-                    <form id="test-form" action="{{ url_for('test_form_submission', smo=smo, test=test_data["Number"]) }}" method="post">
+                    <h1 class="mb-4">{{ test_data["Number"] }} - {{ test_data["Requirement"] }}</h1>
+                    <form id="test-form" action="{{ url_for('test_form_submission', smo=smo, test=test_data.Number) }}"
+                        method="post">
 
                         <fieldset class="mb-3">
                             <legend>Requirements</legend>
                             <div class="mb-3">
                                 <label>
-                                    <test_data class="method">{{ test_data["Requirement"] }}
+                                    <test_data class="method">{{ test_data.Requirement }}
                                 </label>
                             </div>
                         </fieldset>
@@ -96,7 +98,7 @@
                         <div class="mb-3">
                             <label for="Operator" class="form-label">Operator</label>
                             <input type="text" class="form-control" id="Operator" name="Operator"
-                                value='{{ test_data["Operator"] }}'>
+                                value='{{ test_data.Operator }}'>
                         </div>
                         <fieldset class="mb-3">
                             <legend>Method</legend>
@@ -124,48 +126,56 @@
                                     rows="3">{{ test_data['criteria-comment'] }}</textarea>
                             </div>
                             <div class="mb-3">
-                                <label for="status" class="form-label">Status</label>
-                                <select class="form-select" name="status">
-                                    <option value="not started" {% if test_data['Status'].lower() == 'Nan' %}selected{% endif %}>
-                                    </option>
-                                    <option value="not started" {% if test_data['Status']=='not started' %}selected{% endif
+                                <label for="Status" class="form-label">Status</label>
+                                <select class="form-select" name="Status">
+                                    <option value="Not Started" {% if test_data.Status.lower()=='nan' %}selected{% endif
                                         %}>
+                                        Not Started
                                     </option>
-                                    <option value="High" {% if test_data['Status']=='High' %}selected{% endif %}>High
+                                    <option value="High" {% if test_data.Status.lower()=='high' %}selected{% endif %}>
+                                        High
                                     </option>
-                                    <option value="medium" {% if test_data['Status']=='medium' %}selected{% endif %}>Medium
+                                    <option value="Medium" {% if test_data.Status.lower()=='medium' %}selected{% endif
+                                        %}>
+                                        Medium
                                     </option>
-                                    <option value="low" {% if test_data['Status']=='low' %}selected{% endif %}>Low</option>
-                                    <option value="passed" {% if test_data['Status']=='passed' %}selected{% endif %}>Passed
+                                    <option value="Low" {% if test_data.Status.lower()=='low' %}selected{% endif %}>
+                                        Low
                                     </option>
-                                    <option value="N/A" {% if test_data['Status']=='N/A' %}selected{% endif %}>N/A</option>
+                                    <option value="Passed" {% if test_data.Status.lower()=='passed' %}selected{% endif
+                                        %}>
+                                        Passed
+                                    </option>
+                                    <option value="N/A" {% if test_data.Status.lower()=='n/a' %}selected{% endif %}>
+                                        N/A
+                                    </option>
                                 </select>
                             </div>
                         </fieldset>
                         <div class="mb-3">
-                            <label for="conclusion" class="form-label">Conclusion</label>
-                            <select class="form-select" name="conclusion" onchange="">
-                                <option value="" {% if test_data.conclusion=='' %}selected{% endif %}></option>
-                                <option value="Passed" {% if test_data.conclusion=='Passed' %}selected{% endif %}>Passed
-                                </option>
-                                <option value="Failed" {% if test_data.conclusion=='Failed' %}selected{% endif %}>Failed
-                                </option>
-                                <option value="Not Applicable" {% if test_data.conclusion=='Not Applicable' %}selected{%
-                                    endif %}>N/A
-                                </option>
+                            <label for="Conclusion" class="form-label">Conclusion</label>
+                            <select class="form-select" name="Conclusion" onchange="">
+                                <option value="" {% if test_data.Conclusion=='' %}selected{% endif %}></option>
+                                <option value="Passed" {% if test_data.Conclusion=='Passed' %}selected{% endif %}>Passed</option>
+                                <option value="Failed" {% if test_data.Conclusion=='Failed' %}selected{% endif %}>Failed</option>
+                                <option value="Not Applicable" {% if test_data.Conclusion=='Not Applicable' %}selected{% endif %}>N/A</option>
+                                {% if test_data.Conclusion not in ['', 'Passed', 'Failed', 'Not Applicable'] %}
+                                    <option value="{{ test_data.Conclusion }}" selected>{{ test_data.Conclusion }}</option>
+                                {% endif %}
                             </select>
+                            
                         </div>
 
                         <div class="mb-3">
                             <label for="date" class="form-label">Date</label>
-                            <input type="date" class="form-control" id="date" name="date" value="{{ test_data['Date of Test'] }}"
-                                required>
+                            <input type="date" class="form-control" id="date" name="Date of Test"
+                                value="{{ test_data['Date of Test'] }}" required>
                         </div>
 
                         <!-- Add more form elements for other test data fields -->
 
                         <button type="button" id="submit-btn" class="btn btn-primary">Submit</button>
-                    
+
                     </form>
                 </div>
             </div>
@@ -202,12 +212,12 @@
         document.getElementById("submit-btn").addEventListener("click", function () {
             var form = document.getElementById("test-form");
             var formData = new FormData(form);
-    
+
             var jsonData = {};
             formData.forEach(function (value, key) {
                 jsonData[key] = value;
             });
-    
+
             var xhr = new XMLHttpRequest();
             xhr.open("POST", form.action, true);
             xhr.setRequestHeader("Content-Type", "application/json");
