@@ -42,12 +42,44 @@ function renderColumns() {
                 console.log(`Rendering item: ${JSON.stringify(item)}`);
                 const itemEl = document.createElement('div');
                 itemEl.classList.add('kanban-item', 'job-tile');
+
+                let progressBarHtml = '';
+                let progressColorClass = 'bg-warning'; // Yellow color for less than 100% complete
+                let progressValue = "";
+                if (item["Percentage Complete"] !== undefined) {
+
+                    if (item["Percentage Complete"] === 100) {
+                        progressColorClass = 'bg-success'; // Green color for 100% complete
+                    }
+
+                    progressValue = item["Percentage Complete"].toFixed(2);
+                }
+                else {
+
+                    progressValue = 0
+
+                }
+
+                progressBarHtml = `
+                <div class="progress">
+                    <div class="progress-bar ${progressColorClass}" role="progressbar" aria-valuenow="${progressValue}"
+                        aria-valuemin="0" aria-valuemax="100" style="width: ${progressValue}%">
+                        ${progressValue}%"
+                    </div>
+
+                </div>`;
+
                 itemEl.innerHTML = `
                     <a href="/${item.SMO}" style="text-decoration: none; color: inherit;">
                         <h5>SMO:${item.SMO}</h5>
                         <p>ER:${item.ER}</p>
                         <h5>${item["Client Name"]}</h5>
+                        <div class="existing-info">
+                            <!-- Existing information goes here -->
+                        </div>
+                        ${progressBarHtml}
                     </a>`;
+
                 itemEl.dataset.job_number = item.SMO;
 
                 itemsEl.appendChild(itemEl);
@@ -72,21 +104,21 @@ function send_New_Status(SMO, new_Status) {
         },
         body: JSON.stringify(jobData)
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            console.log('Job status updated successfully on the server');
-        } else {
-            console.error('Failed to update job status on the server');
-        }
-    })
-    .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                console.log('Job status updated successfully on the server');
+            } else {
+                console.error('Failed to update job status on the server');
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 const columnEls = document.querySelectorAll('#awaiting_samples, #onsite, #on_test, #report_stage, #report_sent, #disposal, #archive');
 
 dragula(Array.from(columnEls))
-    .on('drop',(el,target,source,sibling) =>{
+    .on('drop', (el, target, source, sibling) => {
 
         console.log('Drop event triggered');
 
@@ -126,7 +158,7 @@ dragula(Array.from(columnEls))
 
 //         const oldColumn = columns[oldStatus];
 //         const newColumn = columns[newStatus];
-        
+
 //         console.log('Columns after:', columns);
 
 //         console.log('Old column:', oldColumn);
