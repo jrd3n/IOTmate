@@ -64,7 +64,7 @@ function renderColumns() {
                 <div class="progress">
                     <div class="progress-bar ${progressColorClass}" role="progressbar" aria-valuenow="${progressValue}"
                         aria-valuemin="0" aria-valuemax="100" style="width: ${progressValue}%">
-                        ${progressValue}%"
+                        ${progressValue}%
                     </div>
 
                 </div>`;
