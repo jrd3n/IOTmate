@@ -184,6 +184,23 @@ def test_form_submission(smo, test):
 
     written_bool = write_json_to_excel(folder_path, 'test_data.xlsx', new_data, test)
 
+    def calc_percent_complete(tests):
+        total_jobs = len(tests)
+        blank_conclusion_count = sum(1 for item in tests if item['Conclusion'] != '')
+
+        percentage_complete = (blank_conclusion_count / total_jobs) * 100
+
+        print(percentage_complete)
+
+        return percentage_complete
+
+    all_test_data = read_json_from_excel(folder_path, file_name="test_data.xlsx")
+    percentage_complete = calc_percent_complete(all_test_data)
+
+    new_data = {'Percentage Complete': percentage_complete}
+
+    written_bool = write_json_to_excel(folder_path,'job_information.xlsx',new_data,smo)
+
     return redirect(url_for('test_form', smo=smo, test=test_number))
 
 @app.route('/<smo>')
@@ -241,4 +258,4 @@ def data(smo):
             return jsonify({'success': True})       
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=True , port=5000)
+    app.run(host='0.0.0.0',debug=True , port=5001)
