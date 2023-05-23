@@ -47,7 +47,7 @@
                 <div class="card mt-2" style="position: fixed; width: 16%;">
                     <div class="card-body">
                         <div class="card-header">
-                            <h5>Files</h5>
+                            <h3>Uploaded Files</h3>
                         </div>
                         <ul class="list-group list-group-flush" style="margin-top: 10px; margin-left: 10px;">
                             {% for file in files %}
@@ -71,7 +71,11 @@
                                     <button type="submit" class="btn btn-primary">Upload</button>
                                 </div>
                             </form>
-                        </div>
+                        </div><div style="margin-top: 20px;">
+                        <h4>Example form</h4>
+                        <p>Example test form. Fill in the form, make sure not to edit the headings, and make sure the test number remains on the far left. Ensure the title remains the same. Upload. If a form is here already the upload with over write the previous form.</p>
+                        <a href="{{ url_for('static', filename='test_data.xlsx') }}" download>Example test_data.xlsx</a>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -172,7 +176,7 @@
                 <div class="card mt-2" style="position: fixed; width: 15%;">
                     <div class="card-body">
                         <div class="card-header">
-                            <h5>QR</h5>
+                            <h3>QR</h3>
                         </div>
                         <div style="margin-top: 20px; justify-self: stretch; width: fit-content;">
                             <div id="qrcode"></div>
