@@ -1,49 +1,28 @@
 $(document).ready(function () {
-    console.log('upload_to_dradis_modal.js loaded');
-
     // Function to retrieve console output from Flask server
     function getConsoleOutput() {
-        $.ajax({
-            url: '/get_console_output', // Flask route to fetch console output
-            type: 'GET',
-            success: function (response) {
+        fetch('/get_console_output') // Flask route to fetch console output
+            .then(response => response.text())
+            .then(data => {
                 // Update the element with the received console output
-                $('#console-output').text(response);
-            },
-            error: function (error) {
+                $('#console-output').text(data);
+            })
+            .catch(error => {
                 console.error('Error fetching console output:', error);
-            }
-        });
+            });
+    }
+    // Function to start fetching console output
+    function startFetchingConsoleOutput() {
+        // Start fetching console output at an interval
+        consoleOutputInterval = setInterval(getConsoleOutput, 1000);
     }
 
-    // Function to stop retrieving console output
-    function stopConsoleOutput() {
+    // Function to stop fetching console output
+    function stopFetchingConsoleOutput() {
         clearInterval(consoleOutputInterval);
     }
 
-    // Submit form handler
-    $('#upload_to_dradis_form').on('submit', function (event) {
-        event.preventDefault();
-
-        // Make the AJAX request to save form data
-        $.ajax({
-            url: '/submit_form', // Flask route to handle form submission
-            type: 'POST',
-            data: $(this).serialize(),
-            success: function (response) {
-                // Start retrieving console output
-                getConsoleOutput();
-
-                // Stop retrieving console output after 10 seconds
-                setTimeout(stopConsoleOutput, 10000);
-            },
-            error: function (error) {
-                console.error('Error submitting the form:', error);
-            }
-        });
-    });
-    
-        var consoleOutputInterval;
+    var consoleOutputInterval;
 
     // Create the modal HTML structure
     var modalHtml = `
@@ -58,11 +37,10 @@ $(document).ready(function () {
                         <form id="upload_to_dradis_form" method="POST" onsubmit="Upload_to_dradis(event);">
                             <div class="mb-3">
                                 <label for="Project" class="form-label">Select Dradis Project</label>
-                                <select class="form-control" id="Dradis_job_name" name="">
+                                <select class="form-control" id="Dradis_job_name" name="Dradis_Name">
                                 </select>
                             </div>
                             <div id="console-output" style="background-color: black; color: white; font-family: monospace; padding: 10px; overflow: auto; height: 200px; border: 1px solid #ccc; border-radius: 5px;"></div>
-
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary" form="upload_to_dradis_form">Upload</button>
@@ -87,7 +65,7 @@ $(document).ready(function () {
             .then(data => {
 
                 Dradis_Projects = data;
-                console.log(Dradis_Projects);
+                // console.log(Dradis_Projects);
 
                 // Update the modal with the received data
                 var selectElement = $('#Dradis_job_name');
@@ -105,6 +83,8 @@ $(document).ready(function () {
                 console.error('Error fetching data:', error);
             });
 
+        startFetchingConsoleOutput();
+
         $('#myDradisModal').modal('show');
     });
 
@@ -113,6 +93,7 @@ $(document).ready(function () {
         var modal = $('#myDradisModal');
         if (event.target == modal[0]) {
             modal.modal('hide');
+            stopFetchingConsoleOutput();
         }
     });
 
@@ -121,6 +102,7 @@ $(document).ready(function () {
         var modal = $('#myDradisModal');
         if (event.key === 'Escape') {
             modal.modal('hide');
+            stopFetchingConsoleOutput();
         }
     });
 });
@@ -132,11 +114,21 @@ function Upload_to_dradis(event) {
 
     const formData = new FormData(form);
 
-    console.log("HERE")
+    // console.log(formData.entries());
 
-    console.log(Array.from(formData.entries()));
+    const dradisName = formData.get('Dradis_Name');
 
-    const url = "/" + smo + "/data";
+    const matchingProject = Dradis_Projects.find(project => project.name === dradisName);
+    if (matchingProject) {
+        const jobId = matchingProject.id;
+        console.log('Job ID:', jobId);
+
+        // Continue with the code to submit the form to the server...
+    } else {
+        console.log('No matching project found for the provided name.');
+    }
+
+    // const url = "/" + smo + "/data";
 
     // const requestData = Object.fromEntries(formData.entries());
 
