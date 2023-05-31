@@ -21,7 +21,10 @@
         </div>
         <div class="offcanvas-body">
             <div>
-                <a class="btn btn-primary open-modal-button" data-bs-dismiss="offcanvas">Add Job</a>
+                <a class="btn btn-primary open-modal-button" data-bs-dismiss="offcanvas">Edit Job details</a>
+            </div>
+            <div>
+                <a class="btn btn-primary open-dradis-modal-button" data-bs-dismiss="offcanvas">Upload to Dradis options</a>
             </div>
         </div>
     </div>
@@ -192,6 +195,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script src="{{ url_for('static', filename='add_edit_job_modal.js') }}"></script>
+    <script src="{{ url_for('static', filename='upload_to_dradis_modal.js') }}"></script>
     <script>
         var smo = "{{ smo }}";
     </script>

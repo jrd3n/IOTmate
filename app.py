@@ -217,6 +217,8 @@ def test_toc(smo):
     else:
         files = []
 
+    print(files)
+
     job_info = read_json_from_excel(folder_path=folder_path,file_name="job_information.xlsx")
 
     return render_template('test_toc.html', tests=tests, smo=smo, job_info=job_info, files=files)
@@ -256,6 +258,34 @@ def data(smo):
 
         if written_bool == True:
             return jsonify({'success': True})       
+
+@app.route('/dradis/projects', methods=['GET', 'POST'])
+def dradis_jobs():
+
+    from lib.dradis_project_data import get_all_project_data
+
+    api_token = 'gszaZ8EiynJB6ipzPqzA'
+
+    if request.method == 'GET':
+
+        all_dradis_jobs = get_all_project_data(api_token=api_token)
+
+        # print(all_dradis_jobs)
+
+        return jsonify(all_dradis_jobs)
+        
+    elif request.method == 'POST':
+
+        pass
+
+# Store the console output in a global variable or a file
+console_output = []
+
+@app.route('/get_console_output', methods=['GET'])
+def get_console_output():
+    # Retrieve the console output
+    output = '\n'.join(console_output)
+    return output
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True , port=5000)
