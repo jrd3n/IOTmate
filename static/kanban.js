@@ -27,7 +27,6 @@ function loadData() {
         });
 }
 
-
 function renderColumns() {
     console.log('Rendering columns...');
 
