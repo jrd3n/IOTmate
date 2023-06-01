@@ -111,16 +111,14 @@ function Upload_to_dradis(event) {
     event.preventDefault();
 
     const form = document.getElementById('upload_to_dradis_form');
-
     const formData = new FormData(form);
-
-    // console.log(formData.entries());
-
     const dradisName = formData.get('Dradis_Name');
+
+    let jobId = null; // Define jobId with a default value
 
     const matchingProject = Dradis_Projects.find(project => project.name === dradisName);
     if (matchingProject) {
-        const jobId = matchingProject.id;
+        jobId = matchingProject.id;
         console.log('Job ID:', jobId);
 
         // Continue with the code to submit the form to the server...
@@ -128,34 +126,26 @@ function Upload_to_dradis(event) {
         console.log('No matching project found for the provided name.');
     }
 
-    // const url = "/" + smo + "/data";
+    const url = '/dradis/projects';
+    const data = {
+        dradisName: dradisName,
+        jobId: jobId,
+        smo: smo
+    };
 
-    // const requestData = Object.fromEntries(formData.entries());
-
-    // fetch(url, {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify(requestData),
-    // })
-    //     .then((response) => {
-    //         if (response.ok) {
-    //             return response.json();
-    //         } else {
-    //             throw new Error('Error submitting the form');
-    //         }
-    //     })
-    //     .then((jsonResponse) => {
-    //         console.log(jsonResponse);
-
-    //         if (jsonResponse.success) {
-    //             window.location.reload();
-    //         } else {
-    //             alert('Error: Could not submit the form.');
-    //         }
-    //     })
-    //     .catch((error) => {
-    //         console.error('Error:', error);
-    //     });
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(responseData => {
+            // Handle the response from the server as needed
+            console.log('Response from server:', responseData);
+        })
+        .catch(error => {
+            console.error('Error sending form data to server:', error);
+        });
 }
