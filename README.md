@@ -1,12 +1,14 @@
-# Kanban-webserver-with-PM
+# IOTmate
+
+
 
 ## install
 
 ```bash
 
-    wget https://github.com/jrd3n/Kanban-webserver-with-PM/archive/refs/heads/master.zip
+    wget https://github.com/jrd3n/IOTmate/archive/refs/heads/master.zip
     unzip ./master.zip
-    cd ./Kanban-webserver-with-PM-main_master/
+    cd ./IOTmate_master/
     python3 -m venv ./venv
     mkdir ./data
     touch ./static/all_jobs.json
