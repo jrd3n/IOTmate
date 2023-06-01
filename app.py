@@ -13,7 +13,6 @@ def index():
 
 @app.route('/upload', methods=['POST'])
 def handle_upload():
-
     smo = request.form.get('smo')
     test = request.form.get('test')
 
@@ -24,12 +23,12 @@ def handle_upload():
     else:
         upload_folder = f'data/{smo}/'
 
-    print(upload_folder)
-   
+    # print(upload_folder)
+
     app.config['UPLOAD_FOLDER'] = upload_folder
 
     def save_file(file, upload_folder):
-    # Save the uploaded file
+        # Save the uploaded file
         filename = secure_filename(file.filename)
 
         # Make sure the upload folder exists
@@ -39,12 +38,14 @@ def handle_upload():
         file.save(os.path.join(upload_folder, filename))
 
         return os.path.join(upload_folder, filename)
+    
+    
 
-    if 'file' in request.files:
-        print("OTHER FILE")
-        other_file = request.files['file']
-        if other_file:
-            save_file(other_file, upload_folder)
+    if 'file[]' in request.files:
+        print("OTHER FILES")
+        for file in request.files.getlist('file[]'):
+            if file:
+                save_file(file, upload_folder)
 
     next_url = request.form.get('next') or url_for('default_route')
     return redirect(next_url)

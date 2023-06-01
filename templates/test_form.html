@@ -10,6 +10,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
 
+    <!-- Dropzone CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css">
+
+    <!-- Dropzone JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
+
 </head>
 
 <body>
@@ -63,13 +69,22 @@
                             </div>
                         </ul>
                         <div style="margin-top: 20px;">
-                            <form action="/upload" method="post" enctype="multipart/form-data">
+                            <!-- <form action="/upload" method="post" enctype="multipart/form-data">
                                 <input type="hidden" name="smo" value="{{ smo }}">
                                 <input type="hidden" name="test" value="{{test_data['Number']}}">
                                 <input type="hidden" name="next" value="{{ request.url }}">
                                 <div class="input-group">
                                     <input type="file" class="form-control" name="file" id="file-input">
                                     <button type="submit" class="btn btn-primary">Upload</button>
+                                </div>
+                            </form> -->
+                            <form action="/upload" method="post" class="dropzone" id="myDropzone">
+                                <input type="hidden" name="smo" value="{{ smo }}">
+                                <input type="hidden" name="test" value="{{test_data['Number']}}">
+                                <input type="hidden" name="next" value="{{ request.url }}">
+                                <div class="fallback">
+                                    <input name="file" type="file" multiple />
+                                    <input type="submit" value="Upload" />
                                 </div>
                             </form>
                         </div>
@@ -232,6 +247,20 @@
             xhr.send(JSON.stringify(jsonData));
         });
     </script>
+    <script>
+        Dropzone.options.myDropzone = {
+            paramName: "file[]", // The name that will be used to transfer the file
+            maxFilesize: 200, // MB
+            addRemoveLinks: true,
+            acceptedFiles: "image/*,.pdf,.doc,.docx",
+            init: function() {
+                this.on("success", function(file, response) {
+                    console.log(response);
+                    location.reload();
+                });
+            }
+        };
+        </script>
 
 </body>
 
