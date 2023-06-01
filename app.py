@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, jsonify, url_for,redirect, se
 from werkzeug.utils import secure_filename
 from lib.file_manager import *
 
+api_token = 'gszaZ8EiynJB6ipzPqzA'
+
 app = Flask(__name__, static_url_path='/static')
 
 @app.route('/')
@@ -154,77 +156,66 @@ def data(smo):
         if written_bool == True:
             return jsonify({'success': True})       
 
-@app.route('/dradis/projects', methods=['GET', 'POST'])
+@app.route('/dradis/projects', methods=['GET'])
 def dradis_jobs():
-    from lib.dradis_project_data import get_all_project_data
+    from lib.dradis_API_funcs import projects_get_all
 
-    api_token = 'gszaZ8EiynJB6ipzPqzA'
+    all_dradis_jobs = projects_get_all(api_token=api_token)
 
-    if request.method == 'GET':
-        all_dradis_jobs = get_all_project_data(api_token=api_token)
-        return jsonify(all_dradis_jobs)
-    
-    elif request.method == 'POST':
+    return jsonify(all_dradis_jobs)
 
-        from lib.dradis_API_funcs import add_issue
+from lib.dradis_API_funcs import nodes_get_all
 
-        dradis_name = request.json.get('dradisName')  # Access the form data
-        smo = request.json.get('smo')  # Access the form data
-        jobId = request.json.get('jobId')  # Access the form data
+@app.route('/dradis/<project_ID>/nodes', methods=['GET'])
+def dradis_nodes(project_ID):
 
-        TITLE = 'Network accessible components shall not expose any unnecessary services'
-        BASESCORE = "N/A"
-        VECTOR = "N/A"
-        RATING = "Pass"
-        AREA = "Foundation"
-        CLAUSES = "IoT Kitemark Clause A1.2\nReference:\n\tBSI"
-        NONCONFORMANCE = "(Network accessible components exposes unnecessary services/ports.)"
-        CLAUSEREQUIREMENT = "Network accessible components shall not expose any unnecessary services/ports."
-        TOOLS = "None"
-        CAUSE = "-"
-        CORRECTIONCONTAINMENT = "-"
-        CORRECTIVEACTION = "-"
-        DESCRIPTION = "-"
-        SOLUTION = "-"
-        REFERENCES = "-"
-        ADDONTAGS = "-"
+    nodes = nodes_get_all(api_token=api_token, project_ID=project_ID)
 
-        issue_ID = add_issue(
+    #print(nodes)
 
-            api_token=api_token,
-            project_number=jobId,
+    return jsonify(nodes)
 
-            TITLE=TITLE,
-            BASESCORE=BASESCORE,
-            VECTOR=VECTOR,
-            RATING=RATING,
-            AREA=AREA,
-            CLAUSES=CLAUSES,
-            NONCONFORMANCE=NONCONFORMANCE,
-            CLAUSEREQUIREMENT=CLAUSEREQUIREMENT,
-            TOOLS=TOOLS,
-            CAUSE=CAUSE,
-            CORRECTIONCONTAINMENT=CORRECTIONCONTAINMENT,
-            CORRECTIVEACTION=CORRECTIVEACTION,
-            DESCRIPTION=DESCRIPTION,
-            SOLUTION=SOLUTION,
-            REFERENCES=REFERENCES,
-            ADDONTAGS=ADDONTAGS
-        )
-        # Perform operations with the form data
-        # Example: Save the data to the database or process it in some way
-        
-        # Return a response to the client
-        response = {'success': True, 'message': 'Form data received successfully'}
-        return jsonify(response)
+from lib.dradis_API_funcs import issue_write, evidence_write
 
-# Store the console output in a global variable or a file
-console_output = []
+console = ""
+
+@app.route('/dradis/upload', methods=['POST'])
+def dradis_upload():
+    try:
+        # Access the JSON data
+
+        data = request.get_json()
+
+        node_ID = data.get('node_ID')
+        project_ID = data.get('project_ID')
+        smo = data.get('smo')
+
+        folder_path = 'data/{smo}/'.format(smo=smo)
+        file_name = 'test_data.xlsx'
+
+        all_tests_json = read_json_from_excel(folder_path, file_name)
+
+        for test_row_json in all_tests_json:
+            print("Attempting to upload test {} id: {}".format(test_row_json['Number'], project_ID), end="\t")
+            Dradis_issue_ID = issue_write(api_token, project_ID, test_row_json)
+            test_number = test_row_json['Number']
+            new_data = {'Dradis_issue_ID': Dradis_issue_ID}
+            write_json_to_excel(folder_path, file_name, new_data, test_number)
+            Dradis_evidence_ID = evidence_write(api_token, project_ID, test_row_json, node_ID)
+            #print("evidence ID {}".format(Dradis_evidence_ID))
+            new_data = {'Dradis_evidence_ID': Dradis_evidence_ID}
+            write_json_to_excel(folder_path, file_name, new_data, test_number)
+
+        return jsonify({"message": "Data uploaded to Dradis Pro successfully."})
+
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
 
 @app.route('/get_console_output', methods=['GET'])
 def get_console_output():
     # Retrieve the console output
-    output = '\n'.join(console_output)
+    output = console
     return output
 
 if __name__ == '__main__':

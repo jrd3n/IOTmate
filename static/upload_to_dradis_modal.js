@@ -1,26 +1,29 @@
+var Dradis_Projects = [];
+var Dradis_Project_Node = [];
+
 $(document).ready(function () {
     // Function to retrieve console output from Flask server
-    function getConsoleOutput() {
-        fetch('/get_console_output') // Flask route to fetch console output
-            .then(response => response.text())
-            .then(data => {
-                // Update the element with the received console output
-                $('#console-output').text(data);
-            })
-            .catch(error => {
-                console.error('Error fetching console output:', error);
-            });
-    }
-    // Function to start fetching console output
-    function startFetchingConsoleOutput() {
-        // Start fetching console output at an interval
-        consoleOutputInterval = setInterval(getConsoleOutput, 1000);
-    }
+    // function getConsoleOutput() {
+    //     fetch('/get_console_output') // Flask route to fetch console output
+    //         .then(response => response.text())
+    //         .then(data => {
+    //             // Update the element with the received console output
+    //             $('#console-output').text(data);
+    //         })
+    //         .catch(error => {
+    //             console.error('Error fetching console output:', error);
+    //         });
+    // }
+    // // Function to start fetching console output
+    // function startFetchingConsoleOutput() {
+    //     // Start fetching console output at an interval
+    //     consoleOutputInterval = setInterval(getConsoleOutput, 1000);
+    // }
 
-    // Function to stop fetching console output
-    function stopFetchingConsoleOutput() {
-        clearInterval(consoleOutputInterval);
-    }
+    // // Function to stop fetching console output
+    // function stopFetchingConsoleOutput() {
+    //     clearInterval(consoleOutputInterval);
+    // }
 
     var consoleOutputInterval;
 
@@ -40,7 +43,11 @@ $(document).ready(function () {
                                 <select class="form-control" id="Dradis_job_name" name="Dradis_Name">
                                 </select>
                             </div>
-                            <div id="console-output" style="background-color: black; color: white; font-family: monospace; padding: 10px; overflow: auto; height: 200px; border: 1px solid #ccc; border-radius: 5px;"></div>
+                            <div class="mb-3">
+                                <label for="node" class="form-label">Select Dradis Project Node</label>
+                                <select class="form-control" id="Dradis_node_name" name="Dradis_Node">
+                                </select>
+                            </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary" form="upload_to_dradis_form">Upload</button>
@@ -83,17 +90,51 @@ $(document).ready(function () {
                 console.error('Error fetching data:', error);
             });
 
-        startFetchingConsoleOutput();
+        // startFetchingConsoleOutput();
 
         $('#myDradisModal').modal('show');
     });
+
+    $(document).ready(function() {
+        $('#Dradis_job_name').on('change', function() {
+            var selectedProject = return_project_ID();
+            console.log('User selected: ', selectedProject);
+    
+            // Make the HTTP GET request to the '/dradis/project_ID/nodes' endpoint
+            fetch(`/dradis/${selectedProject}/nodes`)
+                .then(response => response.json())
+                .then(data => {
+
+                    Dradis_Project_Node = data;
+
+                    var selectElement = $('#Dradis_node_name');
+                    selectElement.empty();  // Clear existing options
+    
+                    // Add options to the select element
+                    Dradis_Project_Node.forEach(node => {
+                        selectElement.append($('<option>', {
+                            // value: node.id,  // Replace 'id' with the actual property name
+                            text: node.label  // Replace 'name' with the actual property name
+                        }));
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        });
+    });
+    
+
+    $('#myDradisModal').on('hidden.bs.modal', function () {
+        stopFetchingConsoleOutput();
+    });    
 
     // Close the modal when the user clicks outside of it
     $(window).on('click', function (event) {
         var modal = $('#myDradisModal');
         if (event.target == modal[0]) {
             modal.modal('hide');
-            stopFetchingConsoleOutput();
+            // stopFetchingConsoleOutput();
         }
     });
 
@@ -102,13 +143,12 @@ $(document).ready(function () {
         var modal = $('#myDradisModal');
         if (event.key === 'Escape') {
             modal.modal('hide');
-            stopFetchingConsoleOutput();
+            // stopFetchingConsoleOutput();
         }
     });
 });
 
-function Upload_to_dradis(event) {
-    event.preventDefault();
+function return_project_ID(){
 
     const form = document.getElementById('upload_to_dradis_form');
     const formData = new FormData(form);
@@ -118,20 +158,59 @@ function Upload_to_dradis(event) {
 
     const matchingProject = Dradis_Projects.find(project => project.name === dradisName);
     if (matchingProject) {
-        jobId = matchingProject.id;
-        console.log('Job ID:', jobId);
+        project_ID = matchingProject.id;
+        console.log('Job ID:', project_ID);
 
         // Continue with the code to submit the form to the server...
     } else {
         console.log('No matching project found for the provided name.');
     }
 
-    const url = '/dradis/projects';
+    return project_ID
+}
+
+function return_node_ID() {
+
+    const form = document.getElementById('upload_to_dradis_form');
+    const formData = new FormData(form);
+    const Node_Name = formData.get('Dradis_Node');
+
+    console.log(Node_Name);
+
+    let node_ID = null; // Define jobId with a default value
+
+    const matchingNode = Dradis_Project_Node.find(node => node.label === Node_Name);
+    if (matchingNode) {
+        node_ID = matchingNode.id;
+        console.log('Node ID:', node_ID);
+
+        // Continue with the code to submit the form to the server...
+    } else {
+        console.log('No matching node found for the provided name.');
+    }
+
+    return node_ID;
+}
+
+
+function Upload_to_dradis(event) {
+    event.preventDefault();
+
+    const form = document.getElementById('upload_to_dradis_form');
+    const formData = new FormData(form);
+    const dradisName = formData.get('Dradis_Name');
+
+    const node_ID = return_node_ID();
+
+    const url = '/dradis/upload';
     const data = {
         dradisName: dradisName,
-        jobId: jobId,
+        project_ID: return_project_ID(),
+        node_ID : node_ID,
         smo: smo
     };
+
+    console.log(data)
 
     fetch(url, {
         method: 'POST',
@@ -140,12 +219,22 @@ function Upload_to_dradis(event) {
         },
         body: JSON.stringify(data)
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error sending form data to server');
+            }
+            return response.json();
+        })
         .then(responseData => {
+            if (responseData.error) {
+                throw new Error(responseData.error);
+            }
             // Handle the response from the server as needed
             console.log('Response from server:', responseData);
+            alert("Upload successful!");
         })
         .catch(error => {
             console.error('Error sending form data to server:', error);
-        });
+            alert("Error sending form data to server: " + error.message);
+        });    
 }
