@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dragula/3.7.2/dragula.min.css" />
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
+
+</head>
+
+<style>
+    .job-tile {
+        display: inline-block;
+        width: 90%;
+        height: 150px;
+        padding: 5%;
+        margin: 10px;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        text-align: center;
+        line-height: 15px;
+        vertical-align: middle;
+        white-space: normal;
+        overflow: clip;
+        text-overflow: ellipsis;
+    }
+</style>
+
+<body>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel"
+        style="z-index: 5000;">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">Menu</h5>
+            <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div>
+                <a class="btn btn-primary open-modal-button" data-bs-dismiss="offcanvas">Add Job</a>
+            </div>
+            <div id="qrcode"></div>
+            <input type="checkbox" id="archiveCheckbox"> Show Archive
+        </div>
+    </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">IOT Project Board</a>
+            <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+    </nav>
+    <div class="container-fluid mt-3">
+        <div class="row" id="kanban-board">
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Awaiting Samples</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="awaiting_samples"></div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Samples onsite</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="onsite"></div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">On Test</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="on_test"></div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Report Stage</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="report_stage"></div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Report Sent</h3>
+                    </div>
+                    <div id="report_sent" class="card-body kanban-items"></div>
+                </div>
+            </div>
+
+            <div class="col-md-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Awaiting Disposal</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="disposal"></div>
+                </div>
+            </div>
+
+            <div class="col-md-2" style="display: none;" id="archiveColumn">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Archive</h3>
+                    </div>
+                    <div class="card-body kanban-items" id="archive"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Bootstrap JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript -->
+
+    <!-- <script src="{{ url_for('static', filename='all_jobs.json') }}"></script> -->
+    <script src="{{ url_for('static', filename='kanban.js') }}"></script>
+
+    <!-- Custom JavaScript for add_edit job-->
+    <script src="{{ url_for('static', filename='add_edit_job_modal.js') }}"></script>
+    <script>
+        // this is going to be passed to the add edit job modal
+        var smo = "";
+    </script>
+
+    <!-- Code for the QR -->
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script src="{{ url_for('static', filename='qrcode_generator.js') }}"></script>
+    <script>
+        var This_page_url = "{{ request.url }}";
+    </script>
+
+    <script>
+
+        // Function for the show and hide archive coloum
+        const archiveColumn = document.getElementById('archiveColumn');
+        const kanbanColumns = document.querySelector('.col-md-2');
+
+        // Function to toggle the visibility of the archive column
+        function toggleArchiveColumn() {
+            if (archiveCheckbox.checked) {
+                archiveColumn.style.display = 'block'; // Show the column
+                //alert("HERE")
+            } else {
+                archiveColumn.style.display = 'none'; // Hide the column
+
+            }
+        }
+
+        // Event listener for checkbox change
+        const archiveCheckbox = document.getElementById('archiveCheckbox');
+        archiveCheckbox.addEventListener('change', toggleArchiveColumn);
+
+        // Initial toggle based on checkbox state
+        //toggleArchiveColumn();
+
+    </script>
+
+</body>
+
+</html>
