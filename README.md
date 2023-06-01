@@ -1,8 +1,6 @@
 # IOTmate
 
-
-
-## install
+## Install
 
 ```bash
 
