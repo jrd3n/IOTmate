@@ -19,17 +19,65 @@ def score_from_Rating(Rating):
     else:
         return "kljfdklsajfkil"
 
+def clauses_field(Test_number,References ):
+
+    working_string = "* IoT Kitemark clause {Test_number}\n\t\nReferences\n\n* {References}\n".format(Test_number=Test_number, References=References)
+
+    return working_string
+
+def Area_field(Test_number):
+
+    first_char = Test_number[0].upper()
+
+#         Case "A"
+#                 Area = "Foundation"
+#         Case "B"
+#                 Area = "Documentation&Policy"
+#         Case "C"
+#                 Area = "Hardware"
+#         Case "D"
+#                 Area = "UserInterface"
+#         Case "E"
+#                 Area = "WirelessCommunication"
+#         Case "F"
+#                 Area = "WiredCommunication"
+#         Case "G"
+#                 Area = "SupportingInfrastructure"
+#         Case "H"
+#                 Area = "Cryptography"
+
+    if first_char == 'A':
+         Area = "Foundation"
+    elif first_char == 'B':
+        Area = "Documentation&Policy"
+    elif first_char == 'C':
+        Area = "Hardware"
+    elif first_char == 'D':
+        Area = "UserInterface"
+    elif first_char == 'E':
+        Area = "WirelessCommunication"
+    elif first_char == 'F':
+        Area = "WiredCommunication"
+    elif first_char == 'G':
+        Area = "SupportingInfrastructure"
+    elif first_char == 'H':
+        Area = "Cryptography"
+    else:
+        Area=  "A,B,C,D,E,F,G,H, not found in string {Test_number}".format(Test_number)
+
+    return Area
+
 def issue_write(api_token, project_ID, test_row_json):
     # Takes a test row from the test data spread sheet and returns the
 
-    text = Dradis_requirements("Title", test_row_json['Number'] +" - "+ test_row_json['Requirement'])
+    text = Dradis_requirements("Title", test_row_json['Requirement'])
     text += Dradis_requirements("CVSSv3.BaseScore",score_from_Rating(test_row_json['Status']))  #Changed from Capital to the Dradis defined vble (Iker)
     text += Dradis_requirements("CVSSv3.Vector")        #Changed from Capital to the Dradis defined vble (Iker)
     text += Dradis_requirements("Rating", test_row_json['Status'])
-    text += Dradis_requirements("Area")
-    text += Dradis_requirements("Clauses", test_row_json['References'])
-    text += Dradis_requirements("Nonconformance")
-    text += Dradis_requirements("ClauseRequirement")
+    text += Dradis_requirements("Area", Area_field(test_row_json['Number']))
+    text += Dradis_requirements("Clauses", clauses_field(test_row_json['Number'],test_row_json['References']))
+    text += Dradis_requirements("Nonconformance",test_row_json['criteria-comment'])
+    text += Dradis_requirements("ClauseRequirement",test_row_json['Requirement'])
     text += Dradis_requirements("Tools")
     text += Dradis_requirements("Cause")
     text += Dradis_requirements("CorrectionContainment") # For some reason this one is not written in the issue
@@ -56,7 +104,7 @@ def issue_write(api_token, project_ID, test_row_json):
 def evidence_write(api_token, project_ID, test_row_json, node_ID):
     # Takes a test row from the test data spread sheet and returns the
 
-    text = Dradis_requirements("Objective", test_row_json['Requirement'])
+    text = Dradis_requirements("Objective", test_row_json['method-comment'])
     text += Dradis_requirements("Screenshot")
 
     if test_row_json.get('Dradis_issue_ID') is not None and test_row_json.get('Dradis_issue_ID') != "":

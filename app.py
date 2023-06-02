@@ -197,7 +197,7 @@ def dradis_upload():
         all_tests_json = read_json_from_excel(folder_path, file_name)
 
         for test_row_json in all_tests_json:
-            print("Attempting to upload test {} id: {}".format(test_row_json['Number'], project_ID), end="\t")
+            print("\nAttempting to upload test {} id: {}".format(test_row_json['Number'], project_ID), end="\t")
             Dradis_issue_ID = issue_write(api_token, project_ID, test_row_json)
             test_number = test_row_json['Number']
             new_data = {'Dradis_issue_ID': Dradis_issue_ID}
