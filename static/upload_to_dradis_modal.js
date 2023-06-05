@@ -18,17 +18,17 @@ $(document).ready(function () {
                         <form id="upload_to_dradis_form" method="POST" onsubmit="Upload_to_dradis(event);">
                             <div class="mb-3">
                                 <label for="Project" class="form-label">Select Dradis Project</label>
-                                <select class="form-control" id="Dradis_job_name" name="Dradis_Name">
+                                <select class="form-control" id="Dradis_job_name" name="Dradis_Name" required>
                                 </select>
                             </div>
                             <div class="mb-3">
                                 <label for="node" class="form-label">Select Dradis Project Node</label>
-                                <select class="form-control" id="Dradis_node_name" name="Dradis_Node">
+                                <select class="form-control" id="Dradis_node_name" name="Dradis_Node" required>
                                 </select>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" form="upload_to_dradis_form">Upload</button>
+                                <button type="submit" class="btn btn-primary" id="upload_button" form="upload_to_dradis_form">Upload</button>
                             </div>
                         </form>
                     </div>
@@ -55,6 +55,12 @@ $(document).ready(function () {
                 // Update the modal with the received data
                 var selectElement = $('#Dradis_job_name');
                 selectElement.empty(); // Clear existing options
+
+                // Add blank option at the top
+                selectElement.append($('<option>', {
+                    value: '',
+                    text: ''
+                }));
 
                 // Add options to the select element
                 Dradis_Projects.forEach(project => {
@@ -172,6 +178,10 @@ function return_node_ID() {
 
 
 function Upload_to_dradis(event) {
+    var uploadButton = document.getElementById('upload_button');
+    uploadButton.disabled = true;
+    uploadButton.classList.add('disabled');
+
     event.preventDefault();
 
     const form = document.getElementById('upload_to_dradis_form');
@@ -184,11 +194,11 @@ function Upload_to_dradis(event) {
     const data = {
         dradisName: dradisName,
         project_ID: return_project_ID(),
-        node_ID : node_ID,
+        node_ID: node_ID,
         smo: smo
     };
 
-    console.log(data)
+    console.log(data);
 
     fetch(url, {
         method: 'POST',
@@ -214,5 +224,9 @@ function Upload_to_dradis(event) {
         .catch(error => {
             console.error('Error sending form data to server:', error);
             alert("Error sending form data to server: " + error.message);
-        });    
+        })
+        .finally(() => {
+            uploadButton.disabled = false;
+            uploadButton.classList.remove('disabled');
+        });
 }
