@@ -2,28 +2,6 @@ var Dradis_Projects = [];
 var Dradis_Project_Node = [];
 
 $(document).ready(function () {
-    // Function to retrieve console output from Flask server
-    // function getConsoleOutput() {
-    //     fetch('/get_console_output') // Flask route to fetch console output
-    //         .then(response => response.text())
-    //         .then(data => {
-    //             // Update the element with the received console output
-    //             $('#console-output').text(data);
-    //         })
-    //         .catch(error => {
-    //             console.error('Error fetching console output:', error);
-    //         });
-    // }
-    // // Function to start fetching console output
-    // function startFetchingConsoleOutput() {
-    //     // Start fetching console output at an interval
-    //     consoleOutputInterval = setInterval(getConsoleOutput, 1000);
-    // }
-
-    // // Function to stop fetching console output
-    // function stopFetchingConsoleOutput() {
-    //     clearInterval(consoleOutputInterval);
-    // }
 
     var consoleOutputInterval;
 

@@ -11,10 +11,8 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <!-- Dropzone CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.css">
-
     <!-- Dropzone JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
-
 </head>
 
 <body>
@@ -51,11 +49,12 @@
     <div class="container-fluid">
         <div class="row">
             <!-- LEFT PANEL GOES HERE -->
-            <div class="col-md-2">
-                <div class="card mt-2" style="position: fixed; width: 16%;">
+            <div class="col-xl-2 col-lg-3">
+                <div class="container">
+                <div class="card mt-2" style="position:relative; width: 100%;">
                     <div class="card-body">
                         <div class="card-header">
-                            <h3>Uploaded Files</h3>
+                            <h4>Uploaded Files</h4>
                         </div>
                         <ul class="list-group list-group-flush" style="margin-top: 10px; margin-left: 10px;">
                             {% for file in files %}
@@ -69,20 +68,7 @@
                                     style="max-width:300px; max-height:300px;">
                             </div>
                         </ul>
-                        <div style="margin-top: 20px;">
-                            <!-- <form action="/upload" method="post" enctype="multipart/form-data">
-                                <input type="hidden" name="smo" value="{{ smo }}">
-                                <input type="hidden" name="test" value="">
-                                <input type="hidden" name="next" value="{{ request.url }}">
-                                <h1>Drop</h1>
-                                
-                                <br>
-                                <div class="input-group">
-                                    <input type="file" class="form-control form-control form-control-lg" name="file[]" id="file-input" multiple>
-                                    <button type="submit" class="btn btn-primary">Upload</button>
-                                </div>
-                            </form> -->
-                        </div>
+
                         <div style="margin-top: 20px;">
                             <form action="/upload" method="post" class="dropzone" id="myDropzone">
                                 <input type="hidden" name="smo" value="{{ smo }}">
@@ -98,15 +84,15 @@
                         <p>Example test form. Fill in the form, make sure not to edit the headings, and make sure the test number remains on the far left. Ensure the title remains the same. Upload. If a form is here already the upload with over write the previous form.</p>
                         <a href="{{ url_for('static', filename='test_data.xlsx') }}" download>Example test_data.xlsx</a>
                     </div>
-                    </div>
+                    </div></div>
                 </div>
             </div>
-            <div class="col-md-8">
-
-                <h1 class="mb-4">Tests</h1>
+            <div class="col-xl-8 col-lg-6">
+                <div class="container">
+                <h2 class="mb-4">Tests</h2>
 
                 <!-- Not Complete Table -->
-                <h2>Not Complete</h2>
+                <h3>Not Complete</h3>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -149,7 +135,7 @@
                 </table>
 
                 <!-- Complete Table -->
-                <h2>Complete</h2>
+                <h3>Complete</h3>
                 <table class="table table-striped">
                     <thead>
                         <tr>
@@ -186,26 +172,25 @@
                                 {{ test.Status }}</td>
                                 {% endif %}
                         </tr>
-
-
                         {% endfor %}
                     </tbody>
 
                 </table>
             </div>
-
-            <div class="col-md-2">
-                <div class="card mt-2" style="position: fixed; width: 15%;">
+            </div>
+            <div class="col-xl-2 col-lg-3"  >
+                <div class="container"style="position: sticky; width: 100%;">
+                <div class="card mt-2">
                     <div class="card-body">
                         <div class="card-header">
-                            <h3>QR</h3>
+                            <h4>QR</h4>
                         </div>
-                        <div style="margin-top: 20px; justify-self: stretch; width: fit-content;">
-                            <div id="qrcode"></div>
+                        <div class="container">
+                            <div id="qrcode"></div></div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div></div>
         </div>
     </div>
     </div>
@@ -224,7 +209,6 @@
     <script>
         var This_page_url = "{{ request.url }}";
     </script>
-
 <script>
     Dropzone.options.myDropzone = {
         paramName: "file[]", // The name that will be used to transfer the file

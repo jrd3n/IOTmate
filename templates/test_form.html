@@ -16,6 +16,7 @@
     <!-- Dropzone JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
 
+
 </head>
 
 <body>
@@ -27,7 +28,7 @@
         </div>
         <div class="offcanvas-body">
             <div>
-                <a class="btn btn-primary open-modal-button">Add Job</a>
+                <a class="btn btn-primary open-dradis-modal-button" data-bs-dismiss="offcanvas">Upload to Dradis options</a>
             </div>
         </div>
     </div>
@@ -50,11 +51,12 @@
         <div class="row">
 
             <!-- LEFT PANEL GOES HERE -->
-            <div class="col-md-2">
-                <div class="card mt-2" style="position: fixed; width: 16%;">
+            <div class="col-xl-2 col-lg-3">
+                <div class="container"style="position: sticky; width: 100%;">
+                <div class="card mt-2" >
                     <div class="card-body">
                         <div class="card-header">
-                            <h3>Uploaded Files</h3>
+                            <h4>Uploaded Files</h4>
                         </div>
                         <ul class="list-group list-group-flush" style="margin-top: 10px; margin-left: 10px;">
                             {% for file in files %}
@@ -91,15 +93,15 @@
 
 
                     </div>
-                </div>
+                </div>        </div>
             </div>
 
             <!-- Main Form -->
-            <div class="col-md-8">
+            <div class="col-xl-8 col-lg-6">
                 <!-- Your main form HTML here -->
 
                 <div class="container">
-                    <h1 class="mb-4">{{ test_data["Number"] }} - {{ test_data["Requirement"] }}</h1>
+                    <h2 class="mb-4">{{ test_data["Number"] }} - {{ test_data["Requirement"] }}</h2>
                     <form id="test-form" action="{{ url_for('test_form_submission', smo=smo, test=test_data.Number) }}"
                         method="post">
 
@@ -196,25 +198,29 @@
                     </form>
                 </div>
             </div>
-
-            <div class="col-md-2">
-                <div class="card mt-2" style="position: fixed; width: 15%;">
+            <div class="col-xl-2 col-lg-3">
+                <div class="container">
+                <div class="card mt-2" style="position: sticky; width: 100%;">
                     <div class="card-body">
                         <div class="card-header">
-                            <h3>QR</h3>
+                            <h4>QR</h4>
                         </div>
-                        <div style="margin-top: 20px; justify-self: stretch; width: fit-content;">
-                            <div id="qrcode"></div>
+                        <div class="container">
+                            <div id="qrcode"></div></div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </div></div>
         </div>
 
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
+    <script src="{{ url_for('static', filename='upload_to_dradis_modal.js') }}"></script>
+    <script>
+        var smo = "{{ smo }}";
+    </script>
     <!-- Code for the QR -->
     <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
     <script src="{{ url_for('static', filename='qrcode_generator.js') }}"></script>

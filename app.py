@@ -212,12 +212,5 @@ def dradis_upload():
     except Exception as e:
         return jsonify({"error": str(e)})
 
-
-@app.route('/get_console_output', methods=['GET'])
-def get_console_output():
-    # Retrieve the console output
-    output = console
-    return output
-
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=True , port=5000)
+    app.run(host='0.0.0.0',debug=True , port=5001)
