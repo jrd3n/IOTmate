@@ -165,6 +165,10 @@
                                         %}>
                                         Passed
                                     </option>
+                                    <option value="Failed" {% if test_data.Status.lower()=='failed' %}selected{% endif
+                                        %}>
+                                        Failed
+                                    </option>
                                     <option value="Not Applicable" {% if test_data.Status.lower()=='not applicable' %}selected{% endif %}>
                                         Not Applicable
                                     </option>
