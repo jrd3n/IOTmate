@@ -39,8 +39,6 @@ def handle_upload():
 
         return os.path.join(upload_folder, filename)
     
-    
-
     if 'file[]' in request.files:
         print("OTHER FILES")
         for file in request.files.getlist('file[]'):
@@ -70,6 +68,26 @@ def test_form(smo, test):
     files = os.listdir(app.config['UPLOAD_FOLDER']) if os.path.exists(app.config['UPLOAD_FOLDER']) else []
 
     return render_template('test_form.html', test_data=filtered_test, smo=smo, job_info=job_data, files=files)
+
+    # Retrieve the message data from the request
+from lib.word_report import generate_report
+
+@app.route('/<smo>/create_report', methods=['POST'])
+def create_report(smo):
+   
+    folder_path = 'data/{smo}/'.format(smo=smo)
+    file_name = 'test_data.xlsx'
+
+    all_tests_json = read_json_from_excel(folder_path,file_name)
+
+    # print(all_tests_json)
+
+    generate_report(test_json=all_tests_json,report_output_file_path="{folder_path}/testnotes_{smo}.docx".format(folder_path=folder_path,smo=smo))
+
+    # Process the message and create the report
+    # ...
+    # Return a response indicating the success or any relevant information
+    return jsonify({'success': True, 'message': 'Report created successfully.'})
 
 @app.route('/<smo>/<test>', methods=['POST'])
 def test_form_submission(smo, test):
@@ -213,4 +231,4 @@ def dradis_upload():
         return jsonify({"error": str(e)})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=False , port=5000)
+    app.run(host='0.0.0.0',debug=True , port=5000)

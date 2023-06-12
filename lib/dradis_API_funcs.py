@@ -70,14 +70,14 @@ def Area_field(Test_number):
 def issue_write(api_token, project_ID, test_row_json):
     # Takes a test row from the test data spread sheet and returns the
 
-    text = Dradis_requirements("Title", test_row_json['Requirement'])
-    text += Dradis_requirements("CVSSv3.BaseScore",score_from_Rating(test_row_json['Status']))  #Changed from Capital to the Dradis defined vble (Iker)
+    text = Dradis_requirements("Title", test_row_json.get('Requirement'))
+    text += Dradis_requirements("CVSSv3.BaseScore",score_from_Rating(test_row_json.get('Status')))  #Changed from Capital to the Dradis defined vble (Iker)
     text += Dradis_requirements("CVSSv3.Vector")        #Changed from Capital to the Dradis defined vble (Iker)
-    text += Dradis_requirements("Rating", test_row_json['Status'])
-    text += Dradis_requirements("Area", Area_field(test_row_json['Number']))
-    text += Dradis_requirements("Clauses", clauses_field(test_row_json['Number'],test_row_json['References']))
-    text += Dradis_requirements("Nonconformance",test_row_json['criteria-comment'])
-    text += Dradis_requirements("ClauseRequirement",test_row_json['Requirement'])
+    text += Dradis_requirements("Rating", test_row_json.get('Status'))
+    text += Dradis_requirements("Area", Area_field(test_row_json.get('Number')))
+    text += Dradis_requirements("Clauses", clauses_field(test_row_json.get('Number'),test_row_json.get('References')))
+    text += Dradis_requirements("Nonconformance",test_row_json.get('criteria-comment'))
+    text += Dradis_requirements("ClauseRequirement",test_row_json.get('Requirement'))
     text += Dradis_requirements("Tools")
     text += Dradis_requirements("Cause")
     text += Dradis_requirements("CorrectionContainment") # For some reason this one is not written in the issue
@@ -86,12 +86,14 @@ def issue_write(api_token, project_ID, test_row_json):
     text += Dradis_requirements("Solution")
     text += Dradis_requirements("References")
     text += Dradis_requirements("AddonTags")
-    text += Dradis_requirements("Tags", test_row_json['Status'])
+    text += Dradis_requirements("Tags", test_row_json.get('Status'))
 
-    if test_row_json.get('Dradis_issue_ID') is not None and test_row_json.get('Dradis_issue_ID') != "":
+    issue_ID = test_row_json.get('Dradis_issue_ID')
+
+    print("issue_ID {}".format(issue_ID),end="\t")
+
+    if issue_ID is not None or issue_ID != "" or issue_ID != False or issue_ID != 0 :
         # if we have a issue number
-
-        issue_ID = test_row_json['Dradis_issue_ID']
         print("issue_ID {}".format(issue_ID),end="\t")
         issue_ID = issue_update_existing(api_token, project_ID, issue_ID,text)
         return issue_ID
@@ -104,17 +106,21 @@ def issue_write(api_token, project_ID, test_row_json):
 def evidence_write(api_token, project_ID, test_row_json, node_ID):
     # Takes a test row from the test data spread sheet and returns the
 
-    text = Dradis_requirements("Objective", test_row_json['method-comment'])
+    text = Dradis_requirements("Objective", test_row_json.get('method-comment'))
     text += Dradis_requirements("Screenshot")
 
-    if test_row_json.get('Dradis_issue_ID') is not None and test_row_json.get('Dradis_issue_ID') != "":
+    issue_ID = test_row_json.get('Dradis_issue_ID')
 
-        issue_ID = test_row_json['Dradis_issue_ID']
+    if issue_ID is not None or issue_ID != "" or issue_ID != False or issue_ID != 0 :
 
         # if we have a issue number
-        if test_row_json.get('Dradis_evidence_ID') is not None and test_row_json.get('Dradis_evidence_ID') != "":
-            evidence_ID = test_row_json['Dradis_evidence_ID']
-            print("evidence_ID {}".format(evidence_ID),end="\t")
+
+        evidence_ID = test_row_json.get('Dradis_evidence_ID')
+
+        print("evidence_ID {}".format(evidence_ID),end="\t")
+
+        if evidence_ID is not None or evidence_ID!= "" or evidence_ID != False or evidence_ID != 0 :
+            
             evidence_ID = evidence_update_existing(api_token, project_ID, issue_ID, node_ID, evidence_ID, text)
             return evidence_ID
         else:
@@ -159,7 +165,7 @@ def evidence_update_existing(api_token, project_ID, issue_ID, node_ID, evidence_
 
     if response_error_handling(response):
         response_json = response.json()
-        return response_json['id']
+        return response_json.get('id')
     
 def nodes_get_all(api_token,project_ID):
 
@@ -205,7 +211,7 @@ def evidence_add_new(api_token, project_ID, issue_ID, node_ID, Text):
 
     if response_error_handling(response):
         response_json = response.json()
-        return response_json['id']
+        return response_json.get('id')
 
 def issue_add_new(api_token, project_ID, Text):
 
@@ -222,7 +228,7 @@ def issue_add_new(api_token, project_ID, Text):
 
     if response_error_handling(response):
         response_json = response.json()
-        return response_json['id']
+        return response_json.get('id')
 
 def issue_update_existing(api_token, project_ID, issue_ID, Text):
 
@@ -239,7 +245,7 @@ def issue_update_existing(api_token, project_ID, issue_ID, Text):
     
     if response_error_handling(response):
         response_json = response.json()
-        return response_json['id']
+        return response_json.get('id')
     else:
         print("Resetting issue_ID assosiated with this test.")
         return ""
@@ -258,11 +264,11 @@ if __name__ == "__main__":
     # all_tests_json = read_json_from_excel(folder_path,file_name)
 
     # for test_row_json in all_tests_json:
-    #     print("Writing {}...".format(test_row_json['Number']))
+    #     print("Writing {}...".format(test_row_json.get('Number')))
     #     Dradis_issue_ID = issue_write(api_token,project_ID,test_row_json)
     #     if Dradis_issue_ID != "" or Dradis_issue_ID != None:
     #         print("issue ID {}".format(Dradis_issue_ID))
-    #         test_number = test_row_json['Number']
+    #         test_number = test_row_json.get('Number')
     #         new_data = {'Dradis_issue_ID': Dradis_issue_ID}
     #         write_json_to_excel(folder_path,file_name,new_data,test_number)
     #         Dradis_evidence_ID = evidence_write(api_token, project_ID, test_row_json, node_ID)
