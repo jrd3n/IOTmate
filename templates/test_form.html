@@ -165,8 +165,14 @@
                                         %}>
                                         Passed
                                     </option>
-                                    <option value="N/A" {% if test_data.Status.lower()=='n/a' %}selected{% endif %}>
-                                        N/A
+                                    <option value="Not Applicable" {% if test_data.Status.lower()=='not applicable' %}selected{% endif %}>
+                                        Not Applicable
+                                    </option>
+                                    <option value="Ongoing" {% if test_data.Status.lower()=='ongoing' %}selected{% endif %}>
+                                        Ongoing
+                                    </option>
+                                    <option value="Not Conducted" {% if test_data.Status.lower()=='not conducted' %}selected{% endif %}>
+                                        Not Conducted
                                     </option>
                                 </select>
                             </div>
