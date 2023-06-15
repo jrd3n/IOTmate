@@ -68,20 +68,20 @@ def Area_field(Test_number):
     return Area
 
 def issue_write(api_token, project_ID, test_row_json):
-    # Takes a test row from the test data spread sheet and returns the
+    # Takes a test row from the test data spreadsheet and returns the
 
     text = Dradis_requirements("Title", test_row_json.get('Requirement'))
-    text += Dradis_requirements("CVSSv3.BaseScore",score_from_Rating(test_row_json.get('Status')))  #Changed from Capital to the Dradis defined vble (Iker)
-    text += Dradis_requirements("CVSSv3.Vector")        #Changed from Capital to the Dradis defined vble (Iker)
+    text += Dradis_requirements("CVSSv3.BaseScore", score_from_Rating(test_row_json.get('Status')))
+    text += Dradis_requirements("CVSSv3.Vector")
     text += Dradis_requirements("Rating", test_row_json.get('Status'))
     text += Dradis_requirements("Area", Area_field(test_row_json.get('Number')))
-    text += Dradis_requirements("Clauses", clauses_field(test_row_json.get('Number'),test_row_json.get('References')))
-    text += Dradis_requirements("Nonconformance",test_row_json.get('criteria-comment'))
-    text += Dradis_requirements("ClauseRequirement",test_row_json.get('Requirement'))
+    text += Dradis_requirements("Clauses", clauses_field(test_row_json.get('Number'), test_row_json.get('References')))
+    text += Dradis_requirements("Nonconformance", test_row_json.get('criteria-comment'))
+    text += Dradis_requirements("ClauseRequirement", test_row_json.get('Requirement'))
     text += Dradis_requirements("Tools")
     text += Dradis_requirements("Cause")
-    text += Dradis_requirements("CorrectionContainment") # For some reason this one is not written in the issue
-    text += Dradis_requirements("CorrectiveAction")           # For some reason this one is not written in the issue
+    text += Dradis_requirements("CorrectionContainment")
+    text += Dradis_requirements("CorrectiveAction")
     text += Dradis_requirements("Description")
     text += Dradis_requirements("Solution")
     text += Dradis_requirements("References")
@@ -90,46 +90,40 @@ def issue_write(api_token, project_ID, test_row_json):
 
     issue_ID = test_row_json.get('Dradis_issue_ID')
 
-    print("issue_ID {}".format(issue_ID),end="\t")
-
-    if issue_ID is not None or issue_ID != "" or issue_ID != False or issue_ID != 0 :
-        # if we have a issue number
-        print("issue_ID {}".format(issue_ID),end="\t")
-        issue_ID = issue_update_existing(api_token, project_ID, issue_ID,text)
-        return issue_ID
+    if issue_ID and str(issue_ID).strip() != "":
+        print("issue_ID {}".format(issue_ID), end="\t")
+        issue_ID = issue_update_existing(api_token, project_ID, issue_ID, text)
     else:
-        print("No Issue_ID",end="\t")
+        print("No Issue_ID", end="\t")
         issue_ID = issue_add_new(api_token, project_ID, text)
-        print("issue_ID {}".format(issue_ID),end="\t")
-        return issue_ID
+        print("issue_ID {}".format(issue_ID), end="\t")
+
+    return issue_ID
 
 def evidence_write(api_token, project_ID, test_row_json, node_ID):
-    # Takes a test row from the test data spread sheet and returns the
+    # Takes a test row from the test data spreadsheet and returns the
 
     text = Dradis_requirements("Objective", test_row_json.get('method-comment'))
     text += Dradis_requirements("Screenshot")
 
     issue_ID = test_row_json.get('Dradis_issue_ID')
 
-    if issue_ID is not None or issue_ID != "" or issue_ID != False or issue_ID != 0 :
-
-        # if we have a issue number
-
+    if issue_ID and str(issue_ID).strip() != "":
+        # If we have a valid issue number
         evidence_ID = test_row_json.get('Dradis_evidence_ID')
 
-        print("evidence_ID {}".format(evidence_ID),end="\t")
+        print("evidence_ID {}".format(evidence_ID), end="\t")
 
-        if evidence_ID is not None or evidence_ID!= "" or evidence_ID != False or evidence_ID != 0 :
-            
+        if evidence_ID and str(evidence_ID).strip() != "":
             evidence_ID = evidence_update_existing(api_token, project_ID, issue_ID, node_ID, evidence_ID, text)
-            return evidence_ID
         else:
-            print("No evidence_ID",end="\t")
+            print("No evidence_ID", end="\t")
             evidence_ID = evidence_add_new(api_token, project_ID, issue_ID, node_ID, text)
-            print("evidence_ID {}".format(evidence_ID),end="\t")
-            return evidence_ID
+            print("evidence_ID {}".format(evidence_ID), end="\t")
     else:
         return False
+
+    return evidence_ID
 
 def response_error_handling(response):
     if response.status_code == 201:
@@ -253,30 +247,24 @@ def issue_update_existing(api_token, project_ID, issue_ID, Text):
 if __name__ == "__main__":
 
     api_token = 'gszaZ8EiynJB6ipzPqzA'
-    project_ID = '87'
-    node_ID = '968'
+    project_ID = '124'
+    node_ID = '1003'
 
-    # from file_manager import *
+    from file_manager import *
    
-    # folder_path = 'data/456/'
-    # file_name = 'test_data.xlsx'
+    folder_path = 'data/3625585/'
+    file_name = 'test_data.xlsx'
 
-    # all_tests_json = read_json_from_excel(folder_path,file_name)
+    all_tests_json = read_json_from_excel(folder_path,file_name)
 
-    # for test_row_json in all_tests_json:
-    #     print("Writing {}...".format(test_row_json.get('Number')))
-    #     Dradis_issue_ID = issue_write(api_token,project_ID,test_row_json)
-    #     if Dradis_issue_ID != "" or Dradis_issue_ID != None:
-    #         print("issue ID {}".format(Dradis_issue_ID))
-    #         test_number = test_row_json.get('Number')
-    #         new_data = {'Dradis_issue_ID': Dradis_issue_ID}
-    #         write_json_to_excel(folder_path,file_name,new_data,test_number)
-    #         Dradis_evidence_ID = evidence_write(api_token, project_ID, test_row_json, node_ID)
-    #         if Dradis_evidence_ID != "" or Dradis_evidence_ID != None:
-    #             print("evidence ID {}".format(Dradis_evidence_ID))
-    #             new_data = {'Dradis_evidence_ID': Dradis_evidence_ID}
-    #             write_json_to_excel(folder_path,file_name,new_data,test_number)
-
-    nodes = nodes_get_all(api_token=api_token,project_ID=project_ID)
-
-    print(nodes)
+    for test_row_json in all_tests_json:
+        print("Writing {}...".format(test_row_json.get('Number')))
+        Dradis_issue_ID = issue_write(api_token,project_ID,test_row_json)
+        print("issue ID {}".format(Dradis_issue_ID))
+        test_number = test_row_json.get('Number')
+        new_data = {'Dradis_issue_ID': Dradis_issue_ID}
+        write_json_to_excel(folder_path,file_name,new_data,test_number)
+        Dradis_evidence_ID = evidence_write(api_token, project_ID, test_row_json, node_ID)
+        print("evidence ID {}".format(Dradis_evidence_ID))
+        new_data = {'Dradis_evidence_ID': Dradis_evidence_ID}
+        write_json_to_excel(folder_path,file_name,new_data,test_number)
