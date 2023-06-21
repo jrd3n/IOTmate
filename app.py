@@ -215,15 +215,27 @@ def dradis_upload():
         all_tests_json = read_json_from_excel(folder_path, file_name)
 
         for test_row_json in all_tests_json:
-            print("\nAttempting to upload test {} id: {}".format(test_row_json['Number'], project_ID), end="\t")
-            Dradis_issue_ID = issue_write(api_token, project_ID, test_row_json)
-            test_number = test_row_json['Number']
+            
+            test_number = test_row_json.get('Number')
+
+            print("Writing {}...".format(test_number))
+
+            # Get issue ID and Evidence ID from sheet
+            Dradis_issue_ID = test_row_json.get('Dradis_issue_ID')
+            Dradis_evidence_ID = test_row_json.get('Dradis_evidence_ID')
+
+            Dradis_issue_ID = issue_write(api_token,project_ID,test_row_json, Dradis_issue_ID)
+
+            #Write new Dradis_issue_ID to excel
             new_data = {'Dradis_issue_ID': Dradis_issue_ID}
-            write_json_to_excel(folder_path, file_name, new_data, test_number)
-            Dradis_evidence_ID = evidence_write(api_token, project_ID, test_row_json, node_ID)
-            #print("evidence ID {}".format(Dradis_evidence_ID))
+            write_json_to_excel(folder_path,file_name,new_data,test_number)
+
+            # Write evidence
+            Dradis_evidence_ID = evidence_write(api_token, project_ID, test_row_json, node_ID, Dradis_evidence_ID, Dradis_issue_ID)
+
+            #Write new Dradis_evidence_ID to excel
             new_data = {'Dradis_evidence_ID': Dradis_evidence_ID}
-            write_json_to_excel(folder_path, file_name, new_data, test_number)
+            write_json_to_excel(folder_path,file_name,new_data,test_number)
 
         return jsonify({"message": "Data uploaded to Dradis Pro successfully."})
 
