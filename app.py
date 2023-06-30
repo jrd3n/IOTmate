@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, jsonify, url_for,redirect, send_file
 from werkzeug.utils import secure_filename
 from lib.file_manager import *
+import zipfile
 
 api_token = 'gszaZ8EiynJB6ipzPqzA'
 
@@ -48,6 +49,64 @@ def handle_upload():
     next_url = request.form.get('next') or url_for('default_route')
     return redirect(next_url)
 
+@app.route('/<smo>/create_report', methods=['POST'])
+def create_report(smo):
+   
+    folder_path = 'data/{smo}/'.format(smo=smo)
+    file_name = 'test_data.xlsx'
+
+    all_tests_json = read_json_from_excel(folder_path,file_name)
+
+    # print(all_tests_json)
+
+    generate_report(test_json=all_tests_json,report_output_file_path="{folder_path}/testnotes_{smo}.docx".format(folder_path=folder_path,smo=smo))
+
+    # Process the message and create the report
+    # ...
+    # Return a response indicating the success or any relevant information
+    return jsonify({'success': True, 'message': 'Report created successfully.'})
+
+
+@app.route('/<smo>/zip_pictures', methods=['POST'])
+def zip_pictures(smo):
+    main_folder = f'data/{smo}/'
+    output_zip = f'data/{smo}/pictures.zip'
+
+    # Check if the main folder exists
+    if not os.path.exists(main_folder):
+        return "Main folder does not exist."
+
+    # Create a new zip file
+    with zipfile.ZipFile(output_zip, 'w') as zipf:
+        # Traverse through all subfolders and files
+        for root, dirs, files in os.walk(main_folder):
+            for file in files:
+                # Check if the file is a picture (you can modify this condition to match your specific criteria)
+                if file.endswith(('.jpg', '.jpeg', '.png', '.gif')):
+                    # Get the full path of the file
+                    file_path = os.path.join(root, file)
+                    # Get the subfolder name
+                    subfolder_name = os.path.basename(root)
+                    # Generate the new filename with the prefix
+
+
+                    # Get the original filename without the subdirectory prefix
+                    _, original_filename = os.path.split(file_path)
+
+
+                    new_filename = f"{subfolder_name}_{original_filename}"
+                    # # Add the file to the zip with the new filename
+                    # zipf.write(file_path, os.path.join(subfolder_name, new_filename))
+
+
+
+
+                    # Add the file to the zip with the original filename
+                    zipf.write(file_path, new_filename)
+
+    # Send the zip file as a response for download
+    return send_file(output_zip, as_attachment=True)
+
 @app.route('/<smo>/<test>', methods=['GET'])
 def test_form(smo, test):
     test_number = test
@@ -71,23 +130,6 @@ def test_form(smo, test):
 
     # Retrieve the message data from the request
 from lib.word_report import generate_report
-
-@app.route('/<smo>/create_report', methods=['POST'])
-def create_report(smo):
-   
-    folder_path = 'data/{smo}/'.format(smo=smo)
-    file_name = 'test_data.xlsx'
-
-    all_tests_json = read_json_from_excel(folder_path,file_name)
-
-    # print(all_tests_json)
-
-    generate_report(test_json=all_tests_json,report_output_file_path="{folder_path}/testnotes_{smo}.docx".format(folder_path=folder_path,smo=smo))
-
-    # Process the message and create the report
-    # ...
-    # Return a response indicating the success or any relevant information
-    return jsonify({'success': True, 'message': 'Report created successfully.'})
 
 @app.route('/<smo>/<test>', methods=['POST'])
 def test_form_submission(smo, test):
