@@ -15,20 +15,64 @@ def Dradis_requirements(Requirement_title, Requirement_text = "-"):
 
 def score_from_Rating(Rating):
 
-    if Rating.lower() == "failed" or Rating.lower() == "fail" :
+    if Rating.lower() == "failed" or Rating.lower() == "fail" or Rating.lower() == "high":
         return "7.0"
-    elif Rating.lower() == "passed":
+    elif Rating.lower() == "passed" or Rating.lower() == "Not Applicable" :
         return "0.0"
     elif Rating.lower() == "medium":
+        return "5.0"
+    elif Rating.lower() == "low":
         return "3.0"
     else:
-        return "kljfdklsajfkil"
+        return "7.0/5.0/3.0/0.0"
 
 def clauses_field(Test_number,References ):
 
     working_string = "* IoT Kitemark clause {Test_number}\n\t\nReferences\n\n* {References}\n".format(Test_number=Test_number, References=References)
 
     return working_string
+
+def category_field(Test_number):
+
+    first_char = Test_number[0].upper()
+
+    #         Case "A"
+    #                 Area = "Foundation"
+    #         Case "B"
+    #                 Area = "Documentation&Policy"
+    #         Case "C"
+    #                 Area = "Hardware"
+    #         Case "D"
+    #                 Area = "UserInterface"
+    #         Case "E"
+    #                 Area = "WirelessCommunication"
+    #         Case "F"
+    #                 Area = "WiredCommunication"
+    #         Case "G"
+    #                 Area = "SupportingInfrastructure"
+    #         Case "H"
+    #                 Area = "Cryptography"
+
+    if first_char == 'A':
+         Area = "Foundation"
+    elif first_char == 'B':
+        Area = "Documentation"
+    elif first_char == 'C':
+        Area = "Hardware"
+    elif first_char == 'D':
+        Area = "UserInterface"
+    elif first_char == 'E':
+        Area = "WirelessCommunication"
+    elif first_char == 'F':
+        Area = "WiredCommunication"
+    elif first_char == 'G':
+        Area = "SupportingInfrastructure"
+    elif first_char == 'H':
+        Area = "Cryptography"
+    else:
+        Area=  "A,B,C,D,E,F,G,H, not found in string {Test_number}".format(Test_number)
+
+    return Area
 
 def Area_field(Test_number):
 
@@ -79,9 +123,18 @@ def issue_write(api_token, project_ID, test_row_json, Dradis_issue_ID):
     text += Dradis_requirements("CVSSv3.BaseScore", score_from_Rating(test_row_json.get('Status')))
     text += Dradis_requirements("CVSSv3.Vector")
     text += Dradis_requirements("Rating", test_row_json.get('Status'))
+
+    text += Dradis_requirements("Category", category_field(test_row_json.get('Number')))
+    text += Dradis_requirements("CertificateReference", "KM 748156")
+
     text += Dradis_requirements("Area", Area_field(test_row_json.get('Number')))
     text += Dradis_requirements("Clauses", clauses_field(test_row_json.get('Number'), test_row_json.get('References')))
-    text += Dradis_requirements("Nonconformance", test_row_json.get('criteria-comment'))
+
+    Nonconformance = test_row_json.get('criteria-comment')
+    if Nonconformance == "":
+        Nonconformance = "None"
+
+    text += Dradis_requirements("Nonconformance", Nonconformance)
     text += Dradis_requirements("ClauseRequirement", test_row_json.get('Requirement'))
     text += Dradis_requirements("Tools")
     text += Dradis_requirements("Cause")
@@ -92,8 +145,6 @@ def issue_write(api_token, project_ID, test_row_json, Dradis_issue_ID):
     text += Dradis_requirements("References")
     text += Dradis_requirements("AddonTags")
     text += Dradis_requirements("Tags", test_row_json.get('Status'))
-
-    
 
     if Dradis_issue_ID and str(Dradis_issue_ID).strip() != "":
         print("\tissue_ID {}".format(Dradis_issue_ID), end="\t")
@@ -121,6 +172,15 @@ def evidence_write(api_token, project_ID, test_row_json, node_ID, Dradis_evidenc
     # Takes a test row from the test data spreadsheet and returns the
 
     text = Dradis_requirements("Objective", test_row_json.get('method-comment'))
+
+    Conclusion = test_row_json.get('Conclusion')
+    if Conclusion.lower() == "passed" or Conclusion.lower() == "failed":
+    #     # print("HERE")
+        Conclusion = "The requirement {} at the time of the test.".format(Conclusion)
+    else:
+        Conclusion = Conclusion
+
+    text += "*Conclution/Result:*\n" + Conclusion + "\n\n"
     text += Dradis_requirements("Screenshot")
 
     if Dradis_issue_ID and str(Dradis_issue_ID).strip() != "":
