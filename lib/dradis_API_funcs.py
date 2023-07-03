@@ -116,13 +116,19 @@ def Area_field(Test_number):
 
     return Area
 
+def Rating_feild(Status):
+    if Status == "Not Applicable":
+        Status = "NotApplicable"
+
+    return Status
+
 def issue_write(api_token, project_ID, test_row_json, Dradis_issue_ID):
     # Takes a test row from the test data spreadsheet and returns the
 
     text = Dradis_requirements("Title", test_row_json.get('Requirement'))
     text += Dradis_requirements("CVSSv3.BaseScore", score_from_Rating(test_row_json.get('Status')))
     text += Dradis_requirements("CVSSv3.Vector")
-    text += Dradis_requirements("Rating", test_row_json.get('Status'))
+    text += Dradis_requirements("Rating", Rating_feild(test_row_json.get('Status')))
 
     text += Dradis_requirements("Category", category_field(test_row_json.get('Number')))
     text += Dradis_requirements("CertificateReference", "KM 748156")
@@ -144,7 +150,7 @@ def issue_write(api_token, project_ID, test_row_json, Dradis_issue_ID):
     text += Dradis_requirements("Solution")
     text += Dradis_requirements("References")
     text += Dradis_requirements("AddonTags")
-    text += Dradis_requirements("Tags", test_row_json.get('Status'))
+    text += Dradis_requirements("Tags", Rating_feild(test_row_json.get('Status')))
 
     if Dradis_issue_ID and str(Dradis_issue_ID).strip() != "":
         print("\tissue_ID {}".format(Dradis_issue_ID), end="\t")
