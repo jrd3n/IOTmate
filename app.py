@@ -88,18 +88,12 @@ def zip_pictures(smo):
                     # Get the subfolder name
                     subfolder_name = os.path.basename(root)
                     # Generate the new filename with the prefix
-
-
                     # Get the original filename without the subdirectory prefix
                     _, original_filename = os.path.split(file_path)
-
 
                     new_filename = f"{subfolder_name}_{original_filename}"
                     # # Add the file to the zip with the new filename
                     # zipf.write(file_path, os.path.join(subfolder_name, new_filename))
-
-
-
 
                     # Add the file to the zip with the original filename
                     zipf.write(file_path, new_filename)

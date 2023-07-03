@@ -36,6 +36,11 @@
             <form action="/{{ smo }}/zip_pictures" method="post">
                 <button class="btn btn-primary" type="submit">Zip Pictures</button>
             </form>
+
+            <button class="btn btn-primary" onclick="openPga('{{smo}}')">Open PGA</button>
+
+            <a class="btn btn-primary" href="https://10.81.253.200" target="_blank">Open Dradis</a>
+
         </div>
     </div>
 
@@ -229,6 +234,11 @@
             });
         }
     };
+
+    function openPga(smo) {
+      var pgaURL = "https://pga.bsigroup.com/Search/JobSearch.aspx?SMONumberequals=" + smo;
+      window.open(pgaURL, "_blank");
+    }
     </script>
 </body>
 
