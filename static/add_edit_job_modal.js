@@ -29,6 +29,11 @@ $(document).ready(function () {
                                 <input type="text" class="form-control" id="Standard" name="Standard">
                             </div>
                             <div class="mb-3">
+                                <label for="job-comment" class="form-label">Job Comment</label>
+                                <textarea class="form-control" id="job-comment" name="job-comment"
+                                    rows="3"></textarea>
+                            </div>
+                            <div class="mb-3">
                                 <label for="status" class="form-label">Status</label>
                                 <select class="form-control" id="Status" name="Status">
                                     <option value="awaiting_samples">Awaiting Samples</option>
@@ -74,6 +79,8 @@ $(document).ready(function () {
                     $('#status').val(data.Status);
                     $('#ER').val(data.ER);
                     $('#standard').val(data.Standard);
+                    $('#job-comment').val(data['job-comment']);
+                    
                     // Update other fields as needed
                 })
                 .catch(error => {

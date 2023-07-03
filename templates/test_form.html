@@ -38,7 +38,7 @@
             <a class="navbar-brand" href="{{ url_for('test_toc', smo=smo|trim) }}">Test form</a>
             <span class="navbar-text">
                 Job Number: {{ job_info.SMO }} | Client: {{ job_info['Client Name'] }} | Standard: {{ job_info.Standard
-                }}
+                }} {{job_info}}
             </span>
             <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
@@ -129,7 +129,7 @@
                             <div class="mb-3">
                                 <label for="method-comment" class="form-label">Method Comment</label>
                                 <textarea class="form-control" id="method-comment" name="method-comment"
-                                    rows="3">{{ test_data['method-comment'] }}</textarea>
+                                    rows="9">{{ test_data['method-comment'] }}</textarea>
                             </div>
                         </fieldset>
                         <fieldset class="mb-3">
@@ -195,7 +195,17 @@
                             
                         </div>
 
+                        <div class="mb-3">
+                            <label for="tools" class="form-label">Tools</label>
+                            <textarea class="form-control" id="tools-comment" name="tools-comment"
+                            rows="3">{{ test_data['tools-comment'] }}</textarea>
+                        </div>
 
+                        <div class="mb-3">
+                            <label for="notes" class="form-label">Internal notes</label>
+                            <textarea class="form-control" id="notes-comment" name="notes-comment"
+                            rows="5">{{ test_data['notes-comment'] }}</textarea>
+                        </div>
                         
                         <div class="mb-3">
                             <label for="date" class="form-label">Date</label>

@@ -70,7 +70,7 @@ def create_report(smo):
 @app.route('/<smo>/zip_pictures', methods=['POST'])
 def zip_pictures(smo):
     main_folder = f'data/{smo}/'
-    output_zip = f'data/{smo}/pictures.zip'
+    output_zip = f'data/{smo}/{smo}_pictures.zip'
 
     # Check if the main folder exists
     if not os.path.exists(main_folder):
@@ -107,7 +107,8 @@ def test_form(smo, test):
     folder_path = f'data/{smo}/'
 
     all_test_data = read_json_from_excel(folder_path, file_name="test_data.xlsx")
-    job_data = read_json_from_excel(folder_path, 'job_information.xlsx')
+
+    job_info = read_json_from_excel(folder_path=folder_path,file_name="job_information.xlsx")
 
     filtered_test = [test for test in all_test_data if test["Number"].strip() == test_number]
 
@@ -120,7 +121,7 @@ def test_form(smo, test):
 
     files = os.listdir(app.config['UPLOAD_FOLDER']) if os.path.exists(app.config['UPLOAD_FOLDER']) else []
 
-    return render_template('test_form.html', test_data=filtered_test, smo=smo, job_info=job_data, files=files)
+    return render_template('test_form.html', test_data=filtered_test, smo=smo, job_info=job_info, files=files)
 
     # Retrieve the message data from the request
 from lib.word_report import generate_report
@@ -173,6 +174,8 @@ def test_toc(smo):
 
     job_info = read_json_from_excel(folder_path=folder_path,file_name="job_information.xlsx")
 
+    print(job_info)
+
     return render_template('test_toc.html', tests=tests, smo=smo, job_info=job_info, files=files)
 
 @app.route('/<smo>/<test>/download/<filename>')
@@ -197,6 +200,8 @@ def data(smo):
     if request.method == 'GET':
 
         job_data = read_json_from_excel(job_file_path,'job_information.xlsx')
+
+        print(job_data)
 
         return jsonify(job_data)
         

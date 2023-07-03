@@ -98,7 +98,7 @@ def Area_field(Test_number):
     if first_char == 'A':
          Area = "Foundation"
     elif first_char == 'B':
-        Area = "Documentation&Policy"
+        Area = "Documentation"
     elif first_char == 'C':
         Area = "Hardware"
     elif first_char == 'D':
