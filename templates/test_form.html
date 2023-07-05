@@ -37,8 +37,8 @@
         <div class="container">
             <a class="navbar-brand" href="{{ url_for('test_toc', smo=smo|trim) }}">Test form</a>
             <span class="navbar-text">
-                Job Number: {{ job_info.SMO }} | Client: {{ job_info['Client Name'] }} | Standard: {{ job_info.Standard
-                }} {{job_info}}
+                Job Number: {{ job_info[0]['SMO'] }} | Client: {{ job_info[0]['Client Name'] }} | Standard: {{
+                    job_info[0]['Standard'] }}
             </span>
             <button class="btn btn-outline-success" type="button" data-bs-toggle="offcanvas"
                 data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
