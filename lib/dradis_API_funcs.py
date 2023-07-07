@@ -98,21 +98,21 @@ def Area_field(Test_number):
     if first_char == 'A':
          Area = "Foundation"
     elif first_char == 'B':
-        Area = "Documentation"
+        Area = "Documentation & Policy"
     elif first_char == 'C':
-        Area = "Hardware"
+        Area = "Hardware & Device"
     elif first_char == 'D':
-        Area = "UserInterface"
+        Area = "User Interface"
     elif first_char == 'E':
-        Area = "WirelessCommunication"
+        Area = "Wireless Communication"
     elif first_char == 'F':
-        Area = "WiredCommunication"
+        Area = "Wired Communication"
     elif first_char == 'G':
-        Area = "SupportingInfrastructure"
+        Area = "Supporting Infrastructure"
     elif first_char == 'H':
         Area = "Cryptography"
     else:
-        Area=  "A,B,C,D,E,F,G,H, not found in string {Test_number}".format(Test_number)
+        Area =  "A,B,C,D,E,F,G,H, not found in string {Test_number}".format(Test_number)
 
     return Area
 
@@ -186,7 +186,7 @@ def evidence_write(api_token, project_ID, test_row_json, node_ID, Dradis_evidenc
     else:
         Conclusion = Conclusion
 
-    text += "*Conclution/Result:*\n" + Conclusion + "\n\n"
+    text += "*Conclusion/Result:*\n" + Conclusion + "\n\n"
     text += Dradis_requirements("Screenshot")
 
     if Dradis_issue_ID and str(Dradis_issue_ID).strip() != "":
